@@ -26,7 +26,8 @@ model Order {
   customerName  String
   customerPhone String?
   paymentMethod String   // "promptpay" or "truewallet"
-  amount        Float
+  amount        Float    // Total price
+  quantity      Int      @default(1)
   status        String   @default("pending") // "pending", "completed"
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

@@ -60,7 +60,7 @@ export async function deleteProduct(id: number) {
   revalidatePath('/')
 }
 
-export async function createOrder(data: { productId: number, customerName: string, amount: number, paymentMethod: string }) {
+export async function createOrder(data: { productId: number, customerName: string, amount: number, paymentMethod: string, quantity: number }) {
   const product = await prisma.product.findUnique({ where: { id: data.productId } })
   if (!product) throw new Error('Product not found')
 
@@ -69,6 +69,7 @@ export async function createOrder(data: { productId: number, customerName: strin
       productId: data.productId,
       customerName: data.customerName,
       amount: data.amount,
+      quantity: data.quantity,
       paymentMethod: data.paymentMethod,
       status: 'completed'
     }
@@ -85,9 +86,14 @@ export async function createOrder(data: { productId: number, customerName: strin
       })
       
       const cmd = product.command.replace(/{player}/g, data.customerName)
-      await rcon.send(cmd)
+      
+      // Execute the command 'quantity' times
+      for (let i = 0; i < data.quantity; i++) {
+        await rcon.send(cmd)
+        console.log(`RCON executed successfully: ${cmd} (Execution ${i + 1}/${data.quantity})`)
+      }
+      
       await rcon.end()
-      console.log(`RCON executed successfully: ${cmd}`)
     } catch (error) {
       console.error('RCON execution failed:', error)
       // We log the error but still complete the order in DB

@@ -27,9 +27,11 @@ export default function StoreProducts({ products }: { products: any[] }) {
   const [voucherLink, setVoucherLink] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [quantity, setQuantity] = useState(1)
 
   // Generate PromptPay QR
-  const qrCode = selectedProduct ? generatePayload('0812345678', { amount: selectedProduct.price }) : ''
+  const totalPrice = selectedProduct ? selectedProduct.price * quantity : 0
+  const qrCode = selectedProduct ? generatePayload('0812345678', { amount: totalPrice }) : ''
   const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCode)}`
 
   const handleProductClick = (product: any) => {
@@ -37,6 +39,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
       auth?.setLoginModalOpen(true)
     } else {
       setSelectedProduct(product)
+      setQuantity(1)
     }
   }
 
@@ -52,8 +55,9 @@ export default function StoreProducts({ products }: { products: any[] }) {
     await createOrder({
       productId: selectedProduct.id,
       customerName: auth.user.username,
-      amount: selectedProduct.price,
-      paymentMethod
+      amount: totalPrice,
+      paymentMethod,
+      quantity
     })
     
     setLoading(false)
@@ -157,15 +161,24 @@ export default function StoreProducts({ products }: { products: any[] }) {
                 </motion.div>
               ) : (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-                  <div className="flex items-center gap-6 mb-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-6">
                     {selectedProduct.imageUrl && (
-                      <div className="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto sm:mx-0 rounded-2xl bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center overflow-hidden">
                         <img src={selectedProduct.imageUrl} alt={selectedProduct.name} className="max-w-full max-h-full object-contain filter drop-shadow-md" />
                       </div>
                     )}
-                    <div>
-                      <h2 className="text-3xl font-extrabold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-[#c4bbf0]">สั่งซื้อ {selectedProduct.name}</h2>
-                      <p className="text-xl font-semibold text-[#8B5CF6]">ราคา: ฿{selectedProduct.price.toFixed(2)}</p>
+                    <div className="flex-1 text-center sm:text-left">
+                      <h2 className="text-2xl sm:text-3xl font-extrabold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-[#c4bbf0]">สั่งซื้อ {selectedProduct.name}</h2>
+                      <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between mt-2 gap-3 sm:gap-0">
+                        <p className="text-xl font-semibold text-[#8B5CF6]">฿{totalPrice.toFixed(2)}</p>
+                        {selectedProduct.category !== 'Ranks' && (
+                          <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                            <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-8 h-8 flex items-center justify-center rounded-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors">-</button>
+                            <span className="font-bold text-white w-6 text-center">{quantity}</span>
+                            <button type="button" onClick={() => setQuantity(q => q + 1)} className="w-8 h-8 flex items-center justify-center rounded-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors">+</button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   
@@ -183,7 +196,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
                     
                     <div>
                       <label className="block text-sm font-medium mb-3 text-white/80 ml-1">ช่องทางชำระเงิน</label>
-                      <div className="flex gap-4">
+                      <div className="flex flex-col sm:flex-row gap-4">
                         <motion.button whileTap={{ scale: 0.95 }} type="button" onClick={() => setPaymentMethod('promptpay')} className={`flex-1 p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all ${paymentMethod === 'promptpay' ? 'bg-[#8B5CF6]/20 border-[#8B5CF6] text-white shadow-[0_0_15px_rgba(139,92,246,0.2)]' : 'bg-[#2A2D3E] border-white/5 text-white/50 hover:bg-[#32364a]'}`}>
                           <CreditCard size={24} className={paymentMethod === 'promptpay' ? 'text-[#8B5CF6]' : ''} /> 
                           <span className="font-semibold">PromptPay</span>
@@ -205,7 +218,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
                           className="bg-white p-6 rounded-2xl flex flex-col items-center border border-[#8B5CF6]/30 shadow-[0_0_30px_rgba(139,92,246,0.15)] overflow-hidden"
                         >
                           <img src={qrImage} alt="PromptPay QR" className="w-56 h-56 mb-4" />
-                          <p className="text-gray-900 text-base font-bold bg-[#8B5CF6]/10 px-4 py-2 rounded-full text-[#8B5CF6]">สแกนเพื่อจ่าย ฿{selectedProduct.price.toFixed(2)}</p>
+                          <p className="text-gray-900 text-base font-bold bg-[#8B5CF6]/10 px-4 py-2 rounded-full text-[#8B5CF6]">สแกนเพื่อจ่าย ฿{totalPrice.toFixed(2)}</p>
                         </motion.div>
                       )}
 
@@ -221,7 +234,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
                           <input required value={voucherLink} onChange={e => setVoucherLink(e.target.value)} className="w-full bg-[#13141c] border border-white/10 rounded-xl p-4 outline-none focus:border-[#f68b1f] focus:ring-1 focus:ring-[#f68b1f] text-white transition-all shadow-inner" placeholder="https://gift.truemoney.com/campaign/?v=..." />
                           <p className="text-xs text-white/60 mt-3 flex items-start gap-1">
                             <span className="text-[#f68b1f] font-bold">*</span>
-                            สร้างซองของขวัญแบบ "แบ่งจำนวนเงินเท่ากัน" และใส่ยอด ฿{selectedProduct.price.toFixed(2)} เป๊ะๆ
+                            สร้างซองของขวัญแบบ "แบ่งจำนวนเงินเท่ากัน" และใส่ยอด ฿{totalPrice.toFixed(2)} เป๊ะๆ
                           </p>
                         </motion.div>
                       )}
