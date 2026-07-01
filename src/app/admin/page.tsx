@@ -1,13 +1,17 @@
-import { prisma } from '@/lib/prisma'
+import { db } from '@/lib/firebase-admin'
 import { DollarSign, Package, ShoppingCart } from 'lucide-react'
 
+export const revalidate = 0
+
 export default async function AdminDashboard() {
-  const productsCount = await prisma.product.count()
-  const ordersCount = await prisma.order.count()
+  const productsSnap = await db.collection('products').get()
+  const ordersSnap = await db.collection('orders').get()
+  const completedOrdersSnap = await db.collection('orders').where('status', '==', 'completed').get()
+
+  const productsCount = productsSnap.size
+  const ordersCount = ordersSnap.size
+  const orders = completedOrdersSnap.docs.map((doc: any) => doc.data())
   
-  const orders = await prisma.order.findMany({
-    where: { status: 'completed' }
-  })
   const totalRevenue = orders.reduce((sum: number, order: any) => sum + order.amount, 0)
 
   return (

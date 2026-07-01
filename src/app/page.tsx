@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { db } from '@/lib/firebase-admin'
 import { Box, Users, Copy, ShoppingCart, Gavel, ShieldHalf } from 'lucide-react'
 import Link from 'next/link'
 import StoreProducts from '@/components/StoreProducts'
@@ -6,10 +6,11 @@ import NavbarAuthButton from '@/components/NavbarAuthButton'
 import HeroServerStatus from '@/components/HeroServerStatus'
 import HeroAnimatedLayout from '@/components/HeroAnimatedLayout'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function Home() {
-  const products = await prisma.product.findMany()
+  const productsSnap = await db.collection('products').get()
+  const products = productsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })) as any[]
 
   return (
     <>

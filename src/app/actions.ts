@@ -1,6 +1,6 @@
 'use server'
 
-import { prisma } from '@/lib/prisma'
+import { db } from '@/lib/firebase-admin'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { Rcon } from 'rcon-client'
@@ -13,23 +13,25 @@ export async function createProduct(formData: FormData) {
   const imageUrl = formData.get('imageUrl') as string
   const command = formData.get('command') as string
 
-  await prisma.product.create({
-    data: {
-      name,
-      description,
-      category,
-      price,
-      imageUrl: imageUrl || null,
-      command: command || null
-    }
-  })
+  const productData = {
+    name,
+    description,
+    category,
+    price,
+    imageUrl: imageUrl || null,
+    command: command || null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+
+  await db.collection('products').add(productData)
 
   revalidatePath('/admin/products')
   revalidatePath('/')
   redirect('/admin/products')
 }
 
-export async function updateProduct(id: number, formData: FormData) {
+export async function updateProduct(id: string, formData: FormData) {
   const name = formData.get('name') as string
   const description = formData.get('description') as string
   const category = formData.get('category') as string
@@ -37,16 +39,14 @@ export async function updateProduct(id: number, formData: FormData) {
   const imageUrl = formData.get('imageUrl') as string
   const command = formData.get('command') as string
 
-  await prisma.product.update({
-    where: { id },
-    data: {
-      name,
-      description,
-      category,
-      price,
-      imageUrl: imageUrl || null,
-      command: command || null
-    }
+  await db.collection('products').doc(id).update({
+    name,
+    description,
+    category,
+    price,
+    imageUrl: imageUrl || null,
+    command: command || null,
+    updatedAt: new Date().toISOString()
   })
 
   revalidatePath('/admin/products')
@@ -54,26 +54,31 @@ export async function updateProduct(id: number, formData: FormData) {
   redirect('/admin/products')
 }
 
-export async function deleteProduct(id: number) {
-  await prisma.product.delete({ where: { id } })
+export async function deleteProduct(id: string) {
+  await db.collection('products').doc(id).delete()
   revalidatePath('/admin/products')
   revalidatePath('/')
 }
 
-export async function createOrder(data: { productId: number, customerName: string, amount: number, paymentMethod: string, quantity: number }) {
-  const product = await prisma.product.findUnique({ where: { id: data.productId } })
-  if (!product) throw new Error('Product not found')
+export async function createOrder(data: { productId: string, customerName: string, amount: number, paymentMethod: string, quantity: number }) {
+  const productRef = db.collection('products').doc(data.productId)
+  const productSnap = await productRef.get()
+  
+  if (!productSnap.exists) throw new Error('Product not found')
+  const product = productSnap.data() as any
 
-  const order = await prisma.order.create({
-    data: {
-      productId: data.productId,
-      customerName: data.customerName,
-      amount: data.amount,
-      quantity: data.quantity,
-      paymentMethod: data.paymentMethod,
-      status: 'completed'
-    }
-  })
+  const orderData = {
+    productId: data.productId,
+    customerName: data.customerName,
+    amount: data.amount,
+    quantity: data.quantity,
+    paymentMethod: data.paymentMethod,
+    status: 'completed',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+
+  const orderRef = await db.collection('orders').add(orderData)
 
   // Execute RCON command if present
   if (product.command && process.env.RCON_HOST && process.env.RCON_PORT && process.env.RCON_PASSWORD) {
@@ -101,5 +106,5 @@ export async function createOrder(data: { productId: number, customerName: strin
   }
 
   revalidatePath('/admin/orders')
-  return order
+  return { id: orderRef.id, ...orderData }
 }

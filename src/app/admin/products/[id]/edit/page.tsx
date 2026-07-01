@@ -1,17 +1,19 @@
 import { updateProduct } from '@/app/actions'
-import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { notFound } from 'next/navigation'
+import { db } from '@/lib/firebase-admin'
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
-  const id = parseInt(resolvedParams.id)
-  if (isNaN(id)) return notFound()
-
-  const product = await prisma.product.findUnique({ where: { id } })
-  if (!product) return notFound()
-
+  const id = resolvedParams.id
+  
+  const productSnap = await db.collection('products').doc(id).get()
+  
+  if (!productSnap.exists) {
+    return <div>Product not found</div>
+  }
+  
+  const product = { id: productSnap.id, ...productSnap.data() } as any
   const updateProductAction = updateProduct.bind(null, product.id)
 
   return (

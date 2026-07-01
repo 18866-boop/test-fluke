@@ -1,12 +1,13 @@
-import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { Plus, Trash2, Edit } from 'lucide-react'
+import { db } from '@/lib/firebase-admin'
 import { deleteProduct } from '@/app/actions'
 
+export const revalidate = 0
+
 export default async function AdminProducts() {
-  const products = await prisma.product.findMany({
-    orderBy: { createdAt: 'desc' }
-  })
+  const productsSnap = await db.collection('products').orderBy('createdAt', 'desc').get()
+  const products = productsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })) as any[]
 
   return (
     <div className="space-y-6">
