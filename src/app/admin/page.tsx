@@ -8,7 +8,7 @@ export default async function AdminDashboard() {
   const orders = await prisma.order.findMany({
     where: { status: 'completed' }
   })
-  const totalRevenue = orders.reduce((sum, order) => sum + order.amount, 0)
+  const totalRevenue = orders.reduce((sum: number, order: any) => sum + order.amount, 0)
 
   return (
     <div className="space-y-6">
