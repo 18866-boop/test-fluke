@@ -5,6 +5,9 @@ import StoreProducts from '@/components/StoreProducts'
 import NavbarAuthButton from '@/components/NavbarAuthButton'
 import HeroServerStatus from '@/components/HeroServerStatus'
 import HeroAnimatedLayout from '@/components/HeroAnimatedLayout'
+import MobileMenu from '@/components/MobileMenu'
+import CopyIpButton from '@/components/CopyIpButton'
+import SeasonalBackground from '@/components/SeasonalBackground'
 
 export const revalidate = 0
 
@@ -14,12 +17,16 @@ export default async function Home() {
 
   return (
     <>
+      <SeasonalBackground />
       <nav className="glass-nav sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-[#c4bbf0] flex items-center gap-3">
-            <Box size={32} className="text-[#927fbf]" />
-            Veltrixcraft
-          </Link>
+          <div className="flex items-center gap-3">
+            <MobileMenu />
+            <Link href="/" className="text-2xl font-bold text-[#c4bbf0] flex items-center gap-3">
+              <Box size={32} className="text-[#927fbf]" />
+              Veltrixcraft
+            </Link>
+          </div>
           <NavbarAuthButton />
         </div>
       </nav>
@@ -32,11 +39,7 @@ export default async function Home() {
             <p className="text-white/80 text-lg mb-8 max-w-lg leading-relaxed">เลือกหมวดหมู่สินค้าและเติมเงินสำหรับเซิร์ฟเวอร์ Veltrixcraft ของเรา สนับสนุนเพื่อรับยศและไอเทมพิเศษมากมาย!</p>
             
             <div className="flex flex-wrap items-center gap-5">
-              <button className="glass-panel px-6 py-3.5 flex items-center gap-3 hover:bg-[#8B5CF6]/20 border border-white/5 hover:border-[#8B5CF6]/50 transition-all duration-300 shadow-[0_0_20px_rgba(139,92,246,0.1)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:-translate-y-1">
-                <span className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse shadow-[0_0_10px_#4ade80]"></span>
-                <span className="font-bold text-white tracking-wide">Veltrixcraft.com</span>
-                <Copy size={16} className="text-white/50" />
-              </button>
+              <CopyIpButton ip="VeltrixCraftmc.com" />
               <HeroServerStatus />
             </div>
           </div>
