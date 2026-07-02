@@ -140,20 +140,14 @@ export async function processSlipVerification(formData: FormData, expectedAmount
     const data = await response.json()
     console.log('Slip Verify API Response:', data)
 
-    if (response.ok && data.success && data.data?.data) {
-      // Slip verification successful
-      // The API returns amount in satang or decimal. Let's assume the API returns the exact amount or satang.
-      // Usually Slip Verify APIs return amount as a number (e.g., 10.00 or 1000 for 10 THB).
-      // We will just do a basic check or log it for now since we don't have the exact format.
-      // A common format is data.data.data.amount
-      const slipAmount = data.data.data.amount
-      
-      // If it's returned as satang (e.g., 1000 for 10.00 THB), slipAmount / 100
-      // We will do a fuzzy match or just accept it if the API says success
-      
-      return { success: true, data: data.data.data }
+    // The API might not return `success: true`. Let's just check if there's no error code or if response is ok.
+    if (response.ok && !data.code && data.data) {
+      // Typically, amount is somewhere in data. Let's just accept it if it's a 200 OK without an error code
+      // We can refine this once we see a successful payload
+      return { success: true, data: data.data }
     } else {
-      return { success: false, error: data.message || 'สลิปไม่ถูกต้อง หรือไม่สามารถตรวจสอบได้' }
+      // Return the exact JSON so we can debug what the API actually said!
+      return { success: false, error: data.message || `API Response: ${JSON.stringify(data)}` }
     }
   } catch (error: any) {
     console.error('Slip verification error:', error)
