@@ -1,10 +1,9 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useState, memo } from 'react'
 
 type Season = 'winter' | 'spring' | 'summer' | 'autumn'
 
-export default function SeasonalBackground() {
+const SeasonalBackground = memo(() => {
   const [season, setSeason] = useState<Season>('winter')
   const [particles, setParticles] = useState<any[]>([])
 
@@ -17,13 +16,13 @@ export default function SeasonalBackground() {
     else setSeason('autumn')
 
     // Generate random particles
-    const newParticles = Array.from({ length: 30 }).map((_, i) => ({
+    // Reduce particle count slightly for better performance on mobile
+    const newParticles = Array.from({ length: 20 }).map((_, i) => ({
       id: i,
-      x: Math.random() * 100, // percentage
-      yOffset: Math.random() * -100, // start above screen
-      size: Math.random() * 10 + 5, // size in px
-      duration: Math.random() * 10 + 10, // fall duration in seconds
-      delay: Math.random() * 5, // start delay
+      left: `${Math.random() * 100}%`,
+      animationDuration: `${Math.random() * 10 + 10}s`,
+      animationDelay: `-${Math.random() * 20}s`,
+      size: `${Math.random() * 10 + 5}px`,
       opacity: Math.random() * 0.5 + 0.2
     }))
     setParticles(newParticles)
@@ -40,45 +39,38 @@ export default function SeasonalBackground() {
   }
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden" aria-hidden="true">
       {particles.map(p => (
-        <motion.div
+        <div
           key={p.id}
-          className={`absolute ${getParticleStyle(season)}`}
+          className={`absolute top-[-20px] ${getParticleStyle(season)}`}
           style={{
+            left: p.left,
             width: p.size,
             height: p.size,
-            left: `${p.x}vw`,
             opacity: p.opacity,
-          }}
-          initial={{ y: `${p.yOffset}vh`, x: 0, rotate: 0 }}
-          animate={{ 
-            y: '120vh', 
-            x: [0, 20, -20, 0], 
-            rotate: 360 
-          }}
-          transition={{
-            y: {
-              duration: p.duration,
-              repeat: Infinity,
-              ease: "linear",
-              delay: p.delay
-            },
-            x: {
-              duration: p.duration / 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: p.delay
-            },
-            rotate: {
-              duration: p.duration,
-              repeat: Infinity,
-              ease: "linear",
-              delay: p.delay
-            }
+            animation: `seasonalFall ${p.animationDuration} linear infinite`,
+            animationDelay: p.animationDelay,
           }}
         />
       ))}
+      <style jsx global>{`
+        @keyframes seasonalFall {
+          0% {
+            transform: translateY(-20px) translateX(0) rotate(0deg);
+          }
+          50% {
+            transform: translateY(50vh) translateX(20px) rotate(180deg);
+          }
+          100% {
+            transform: translateY(100vh) translateX(-20px) rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
   )
-}
+})
+
+SeasonalBackground.displayName = 'SeasonalBackground'
+
+export default SeasonalBackground

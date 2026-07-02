@@ -3,7 +3,6 @@ import { Kanit } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/context/AuthContext'
 import LoginModal from '@/components/LoginModal'
-import Snowflakes from '@/components/Snowflakes'
 import IPhoneDock from '@/components/IPhoneDock'
 
 const kanit = Kanit({ subsets: ['thai', 'latin'], weight: ['300', '400', '500', '600', '700'] })
@@ -26,7 +25,7 @@ export default function RootLayout({
             <div className="blob blob-1"></div>
             <div className="blob blob-2"></div>
           </div>
-          <Snowflakes />
+
           <IPhoneDock />
           <LoginModal />
           {children}
