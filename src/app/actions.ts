@@ -153,8 +153,15 @@ export async function processSlipVerification(formData: FormData, expectedAmount
         }
       }
 
-      // Typically, amount is somewhere in data. Let's just accept it if it's a 200 OK without an error code
-      // We can refine this once we see a successful payload
+      // Check amount
+      const rawAmount = data.data?.amount || data.data?.data?.amount || data.amount
+      if (rawAmount !== undefined && rawAmount !== null) {
+        const slipAmount = parseFloat(rawAmount)
+        if (slipAmount !== expectedAmount) {
+          return { success: false, error: `ยอดเงินในสลิปไม่ตรงกับราคาสินค้า (ต้องการ ${expectedAmount} บาท แต่ระบบอ่านได้ ${slipAmount})` }
+        }
+      }
+
       return { success: true, data: data.data, transRef }
     } else {
       // Return the exact JSON so we can debug what the API actually said!
