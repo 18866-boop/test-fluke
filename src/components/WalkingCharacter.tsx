@@ -31,7 +31,7 @@ export default function WalkingCharacter() {
         }}
       >
         <motion.img
-          src="https://starlightskins.lunareclipse.studio/render/default/c91c7502252c4033820d5210b3085503/full"
+          src="https://mc-heads.net/body/c91c7502252c4033820d5210b3085503/right"
           alt="FNTPGamer"
           className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]"
           animate={{
