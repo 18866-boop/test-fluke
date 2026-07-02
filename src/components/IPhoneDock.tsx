@@ -18,7 +18,7 @@ export default function IPhoneDock() {
   ]
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+    <div className="hidden md:block fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
       <div className="bg-black/40 backdrop-blur-xl border border-white/10 p-2 rounded-full flex items-center gap-2 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
         {navItems.map((item) => {
           const isActive = pathname === item.path

@@ -67,23 +67,14 @@ export default function MobileMenu() {
               </div>
 
               <div className="p-4 flex-1 overflow-y-auto space-y-3">
-                <Link href="/" onClick={() => setIsOpen(false)} className="block w-full text-left px-5 py-4 rounded-xl font-extrabold text-white bg-blue-500 hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20">
-                  HOME
-                </Link>
-                <Link href="#" onClick={() => setIsOpen(false)} className="block w-full text-left px-5 py-4 rounded-xl font-bold text-white/80 hover:text-white hover:bg-white/5 transition-colors">
-                  NEWS
-                </Link>
-                <Link href="#" onClick={() => setIsOpen(false)} className="block w-full text-left px-5 py-4 rounded-xl font-bold text-white/80 hover:text-white hover:bg-white/5 transition-colors">
-                  GUIDES
-                </Link>
-                <Link href="#" onClick={() => setIsOpen(false)} className="block w-full text-left px-5 py-4 rounded-xl font-bold text-white/80 hover:text-white hover:bg-white/5 transition-colors">
-                  RULES
-                </Link>
-                <Link href="#" onClick={() => setIsOpen(false)} className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-bold text-white/80 hover:text-white hover:bg-white/5 transition-colors">
-                  <Crown size={20} /> PATRON
-                </Link>
                 <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-extrabold text-white bg-blue-500 hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20">
-                  <ShoppingCart size={20} /> STORE
+                  <ShoppingCart size={20} /> ร้านค้า (Store)
+                </Link>
+                <Link href="/rules" onClick={() => setIsOpen(false)} className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-bold text-white/80 hover:text-white hover:bg-white/5 transition-colors">
+                  <Crown size={20} /> กฎกติกา (Rules)
+                </Link>
+                <Link href="/staff" onClick={() => setIsOpen(false)} className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-bold text-white/80 hover:text-white hover:bg-white/5 transition-colors">
+                  <ShoppingCart size={20} /> ทีมงาน (Staff)
                 </Link>
                 <Link href="#" onClick={() => setIsOpen(false)} className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-extrabold text-white bg-[#5865F2] hover:bg-[#4752C4] transition-colors shadow-lg shadow-[#5865F2]/20 mt-6">
                   <MessageSquare size={20} /> 6,791
