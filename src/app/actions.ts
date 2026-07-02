@@ -194,3 +194,88 @@ export async function createOrder(data: { productId: string, customerName: strin
   revalidatePath('/admin/orders')
   return { id: orderRef.id, ...orderData }
 }
+
+export async function getTopSupporters() {
+  const ordersSnap = await db.collection('orders').where('status', '==', 'completed').get()
+  const manualSnap = await db.collection('manual_supporters').get()
+
+  const supporterMap = new Map<string, { username: string, autoAmount: number, manualAmount: number, totalAmount: number }>()
+
+  // Process Auto Data
+  ordersSnap.docs.forEach(doc => {
+    const data = doc.data()
+    const username = data.customerName
+    const amount = data.amount || 0
+
+    if (!supporterMap.has(username)) {
+      supporterMap.set(username, { username, autoAmount: 0, manualAmount: 0, totalAmount: 0 })
+    }
+    supporterMap.get(username)!.autoAmount += amount
+  })
+
+  // Process Manual Data
+  manualSnap.docs.forEach(doc => {
+    const data = doc.data()
+    const username = data.username
+    const amount = data.amount || 0
+
+    if (!supporterMap.has(username)) {
+      supporterMap.set(username, { username, autoAmount: 0, manualAmount: 0, totalAmount: 0 })
+    }
+    supporterMap.get(username)!.manualAmount += amount
+  })
+
+  // Calculate Totals
+  const supporters = Array.from(supporterMap.values()).map(s => {
+    s.totalAmount = s.autoAmount + s.manualAmount
+    return s
+  })
+
+  // Sort descending by totalAmount
+  supporters.sort((a, b) => b.totalAmount - a.totalAmount)
+
+  return supporters
+}
+
+export async function getManualSupporters() {
+  const snap = await db.collection('manual_supporters').orderBy('updatedAt', 'desc').get()
+  return snap.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }))
+}
+
+export async function setManualSupporter(formData: FormData) {
+  const username = formData.get('username') as string
+  const amount = parseFloat(formData.get('amount') as string)
+
+  if (!username) throw new Error('Username is required')
+
+  const snap = await db.collection('manual_supporters').where('username', '==', username).limit(1).get()
+  
+  if (!snap.empty) {
+    // Update
+    await snap.docs[0].ref.update({
+      amount,
+      updatedAt: new Date().toISOString()
+    })
+  } else {
+    // Add
+    await db.collection('manual_supporters').add({
+      username,
+      amount,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    })
+  }
+
+  revalidatePath('/admin/supporters')
+  revalidatePath('/supporters')
+  redirect('/admin/supporters')
+}
+
+export async function deleteManualSupporter(id: string) {
+  await db.collection('manual_supporters').doc(id).delete()
+  revalidatePath('/admin/supporters')
+  revalidatePath('/supporters')
+}

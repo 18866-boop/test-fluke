@@ -70,6 +70,9 @@ export default function MobileMenu() {
                 <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-extrabold text-white bg-blue-500 hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20">
                   <ShoppingCart size={20} /> ร้านค้า (Store)
                 </Link>
+                <Link href="/supporters" onClick={() => setIsOpen(false)} className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-500 to-orange-500 hover:opacity-90 transition-opacity shadow-lg shadow-orange-500/20">
+                  <Crown size={20} /> Top Donators
+                </Link>
                 <Link href="/rules" onClick={() => setIsOpen(false)} className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-bold text-white/80 hover:text-white hover:bg-white/5 transition-colors">
                   <Crown size={20} /> กฎกติกา (Rules)
                 </Link>
