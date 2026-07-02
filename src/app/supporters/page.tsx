@@ -1,7 +1,7 @@
 import MainNavbar from '@/components/MainNavbar'
 import SeasonalBackground from '@/components/SeasonalBackground'
 import { getTopSupporters } from '@/app/actions'
-import { Crown, Trophy, Medal, Star } from 'lucide-react'
+import { Crown, Trophy, Medal } from 'lucide-react'
 
 export const revalidate = 0
 
@@ -59,8 +59,8 @@ export default async function SupportersPage() {
         <div className="flex flex-col md:flex-row justify-center items-end gap-8 md:gap-0 mb-24 min-h-[400px]">
           {/* Rank 2 */}
           <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-2xl order-2 md:order-1 relative z-20 group">
-            <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500 min-h-[260px] flex items-end">
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-gray-300 drop-shadow-[0_0_10px_rgba(209,213,219,0.5)]">
+            <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500 min-h-[300px] flex flex-col items-center justify-end">
+              <div className="text-gray-300 drop-shadow-[0_0_10px_rgba(209,213,219,0.5)] mb-2">
                 <Medal size={48} />
               </div>
               {podiumOrder[0] ? (
@@ -70,7 +70,7 @@ export default async function SupportersPage() {
                   className="w-32 h-[260px] object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
                 />
               ) : (
-                <div className="w-32 h-[200px] flex items-center justify-center opacity-30">
+                <div className="w-32 h-[260px] flex items-center justify-center opacity-30">
                   <span className="text-white font-bold">รอผู้สนับสนุน</span>
                 </div>
               )}
@@ -91,8 +91,8 @@ export default async function SupportersPage() {
 
           {/* Rank 1 */}
           <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-[0_0_50px_rgba(234,179,8,0.3)] order-1 md:order-2 relative z-30 group">
-            <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500 min-h-[300px] flex items-end">
-              <div className="absolute -top-12 left-1/2 -translate-x-1/2 text-yellow-400 drop-shadow-[0_0_20px_rgba(234,179,8,0.8)]">
+            <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500 min-h-[380px] flex flex-col items-center justify-end">
+              <div className="text-yellow-400 drop-shadow-[0_0_20px_rgba(234,179,8,0.8)] mb-2">
                 <Crown size={64} />
               </div>
               {podiumOrder[1] ? (
@@ -102,7 +102,7 @@ export default async function SupportersPage() {
                   className="w-40 h-[300px] object-contain drop-shadow-[0_15px_30px_rgba(234,179,8,0.4)]"
                 />
               ) : (
-                <div className="w-40 h-[220px] flex items-center justify-center opacity-30">
+                <div className="w-40 h-[300px] flex items-center justify-center opacity-30">
                   <span className="text-white font-bold">รอผู้สนับสนุน</span>
                 </div>
               )}
@@ -123,8 +123,8 @@ export default async function SupportersPage() {
 
           {/* Rank 3 */}
           <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-xl order-3 md:order-3 relative z-10 group">
-            <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500 min-h-[220px] flex items-end">
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-amber-600 drop-shadow-[0_0_10px_rgba(217,119,6,0.5)]">
+            <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500 min-h-[260px] flex flex-col items-center justify-end">
+              <div className="text-amber-600 drop-shadow-[0_0_10px_rgba(217,119,6,0.5)] mb-2">
                 <Medal size={40} />
               </div>
               {podiumOrder[2] ? (
@@ -134,7 +134,7 @@ export default async function SupportersPage() {
                   className="w-28 h-[220px] object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
                 />
               ) : (
-                <div className="w-28 h-[160px] flex items-center justify-center opacity-30">
+                <div className="w-28 h-[220px] flex items-center justify-center opacity-30">
                   <span className="text-white font-bold">รอผู้สนับสนุน</span>
                 </div>
               )}
@@ -153,37 +153,6 @@ export default async function SupportersPage() {
             </div>
           </div>
         </div>
-
-        {/* Other Ranks (4-10) */}
-        {rest.length > 0 && (
-          <div className="max-w-3xl mx-auto mt-20">
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-              <Star className="text-yellow-500" /> อันดับอื่นๆ (4-10)
-            </h2>
-            <div className="bg-[#1a1b26]/80 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
-              <div className="divide-y divide-white/5">
-                {rest.map((supporter, idx) => (
-                  <div key={supporter.username} className="flex items-center gap-6 p-6 hover:bg-white/5 transition-colors">
-                    <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 text-xl font-black text-white/50">
-                      {idx + 4}
-                    </div>
-                    <img 
-                      src={`https://skins.mcstats.com/face/${supporter.uuid}`} 
-                      alt={supporter.username} 
-                      className="w-16 h-16 rounded-xl drop-shadow-md"
-                    />
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white">{supporter.username}</h3>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[#8B5CF6] font-black text-xl">{supporter.totalAmount.toLocaleString()} THB</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </main>
 
       <footer className="glass-nav mt-20 py-8 relative z-10">
