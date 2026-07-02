@@ -70,11 +70,23 @@ export default function StoreProducts({ products }: { products: any[] }) {
   }
 
   const categories = ['Ranks', 'Keys', 'Items']
+  const rankOrder = ['vip', 'vip+', 'mvp', 'mvp+', 'premium', 'supreme', 'superior']
 
   return (
     <>
       {categories.map((category, catIdx) => {
-        const catProducts = products.filter(p => p.category === category)
+        let catProducts = products.filter(p => p.category === category)
+        
+        if (category === 'Ranks') {
+          catProducts.sort((a, b) => {
+            const idxA = rankOrder.indexOf(a.name.toLowerCase())
+            const idxB = rankOrder.indexOf(b.name.toLowerCase())
+            if (idxA !== -1 && idxB !== -1) return idxA - idxB
+            if (idxA !== -1) return -1
+            if (idxB !== -1) return 1
+            return a.price - b.price
+          })
+        }
         if (catProducts.length === 0) return null
         
         return (
