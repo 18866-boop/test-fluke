@@ -1,8 +1,11 @@
 import { Shield, Book, MessageSquare, AlertTriangle, Box, ArrowLeft } from 'lucide-react'
+import MainNavbar from '@/components/MainNavbar'
 
 export default function RulesPage() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
+    <>
+      <MainNavbar />
+      <div className="max-w-4xl mx-auto px-6 py-12">
       
       <div className="glass-panel p-8 md:p-12">
         <h1 className="text-4xl font-bold text-[#c4bbf0] mb-8 border-b border-[#c4bbf0]/20 pb-4">กฎกติกาเซิร์ฟเวอร์</h1>
@@ -36,5 +39,6 @@ export default function RulesPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }

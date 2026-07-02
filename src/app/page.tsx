@@ -5,9 +5,10 @@ import StoreProducts from '@/components/StoreProducts'
 import NavbarAuthButton from '@/components/NavbarAuthButton'
 import HeroServerStatus from '@/components/HeroServerStatus'
 import HeroAnimatedLayout from '@/components/HeroAnimatedLayout'
-import MobileMenu from '@/components/MobileMenu'
 import CopyIpButton from '@/components/CopyIpButton'
 import SeasonalBackground from '@/components/SeasonalBackground'
+
+import MainNavbar from '@/components/MainNavbar'
 
 export const revalidate = 0
 
@@ -18,18 +19,7 @@ export default async function Home() {
   return (
     <>
       <SeasonalBackground />
-      <nav className="glass-nav sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <MobileMenu />
-            <Link href="/" className="text-2xl font-bold text-[#c4bbf0] flex items-center gap-3">
-              <Box size={32} className="text-[#927fbf]" />
-              Veltrixcraft
-            </Link>
-          </div>
-          <NavbarAuthButton />
-        </div>
-      </nav>
+      <MainNavbar />
 
       <main className="max-w-6xl mx-auto px-6 py-12 flex-1 w-full">
         <HeroAnimatedLayout>

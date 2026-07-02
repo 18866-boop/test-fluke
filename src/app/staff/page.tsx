@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import ClientSkinViewer from '@/components/ClientSkinViewer'
+import MainNavbar from '@/components/MainNavbar'
 
 export default function StaffPage() {
   const staffs: Array<{ name: string, role: string, uuid: string, skinUrl?: string }> = [
@@ -18,7 +19,9 @@ export default function StaffPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12 flex-1 w-full relative z-10">
+    <>
+      <MainNavbar />
+      <div className="max-w-5xl mx-auto px-6 py-12 flex-1 w-full relative z-10">
       
       <div className="text-center mb-16">
         <h1 className="text-4xl font-bold text-[#c4bbf0] mb-4">ทีมงาน Veltrixcraft</h1>
@@ -48,5 +51,6 @@ export default function StaffPage() {
         ))}
       </div>
     </div>
+    </>
   )
 }
