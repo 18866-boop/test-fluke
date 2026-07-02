@@ -18,7 +18,19 @@ export default async function Home() {
 
   try {
     const productsSnap = await db.collection('products').orderBy('price', 'asc').get()
-    products = productsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })) as any[]
+    products = productsSnap.docs.map((doc: any) => {
+      const data = doc.data()
+      return {
+        id: doc.id,
+        name: data.name,
+        description: data.description,
+        category: data.category,
+        price: data.price,
+        imageUrl: data.imageUrl,
+        command: data.command,
+        // serialize timestamp if it exists, or just omit it since the client doesn't need it
+      }
+    })
   } catch (err: any) {
     errorMsg = err.message || err.toString()
   }
