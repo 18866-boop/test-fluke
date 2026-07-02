@@ -6,7 +6,7 @@ import { deleteProduct } from '@/app/actions'
 export const revalidate = 0
 
 export default async function AdminProducts() {
-  const productsSnap = await db.collection('products').orderBy('createdAt', 'desc').get()
+  const productsSnap = await db.collection('products').orderBy('price', 'asc').get()
   const products = productsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })) as any[]
 
   return (

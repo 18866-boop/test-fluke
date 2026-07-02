@@ -9,7 +9,7 @@ import HeroAnimatedLayout from '@/components/HeroAnimatedLayout'
 export const revalidate = 0
 
 export default async function Home() {
-  const productsSnap = await db.collection('products').get()
+  const productsSnap = await db.collection('products').orderBy('price', 'asc').get()
   const products = productsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })) as any[]
 
   return (
