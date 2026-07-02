@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import generatePayload from 'promptpay-qr'
 import { X, CreditCard, Gift, Loader2, Check } from 'lucide-react'
-import { createOrder, verifyPromoCode, processTrueMoneyVoucher } from '@/app/actions'
+import { createOrder, verifyPromoCode, processTrueMoneyVoucher, processSlipVerification } from '@/app/actions'
 import { useAuth } from '@/context/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -25,6 +25,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<'promptpay'|'truewallet'>('promptpay')
   const [voucherLink, setVoucherLink] = useState('')
+  const [slipFile, setSlipFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [quantity, setQuantity] = useState(1)
@@ -64,6 +65,11 @@ export default function StoreProducts({ products }: { products: any[] }) {
         alert('กรุณากรอกลิงก์ซองของขวัญ TrueWallet')
         return
       }
+    } else if (paymentMethod === 'promptpay') {
+      if (!slipFile) {
+        alert('กรุณาอัปโหลดสลิปโอนเงิน PromptPay')
+        return
+      }
     }
 
     setLoading(true)
@@ -75,9 +81,15 @@ export default function StoreProducts({ products }: { products: any[] }) {
         setLoading(false)
         return
       }
-    } else {
-      // Fake payment processing delay for PromptPay
-      await new Promise(r => setTimeout(r, 2000))
+    } else if (paymentMethod === 'promptpay') {
+      const formData = new FormData()
+      formData.append('file', slipFile)
+      const res = await processSlipVerification(formData, totalPrice)
+      if (!res.success) {
+        alert(res.error)
+        setLoading(false)
+        return
+      }
     }
     
     await createOrder({
@@ -98,6 +110,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
       setPromoCode('')
       setPromoDiscount(null)
       setPromoError('')
+      setSlipFile(null)
     }, 4000)
   }
 
@@ -208,6 +221,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
                     setPromoCode('')
                     setPromoDiscount(null)
                     setPromoError('')
+                    setSlipFile(null)
                   }
                 }} 
                 className="absolute top-5 right-5 text-white/40 hover:text-white hover:rotate-90 transition-all duration-300 bg-white/5 hover:bg-white/10 p-2 rounded-full"
@@ -322,7 +336,19 @@ export default function StoreProducts({ products }: { products: any[] }) {
                           className="bg-white p-6 rounded-2xl flex flex-col items-center border border-[#8B5CF6]/30 shadow-[0_0_30px_rgba(139,92,246,0.15)] overflow-hidden"
                         >
                           <img src={qrImage} alt="PromptPay QR" className="w-56 h-56 mb-4" />
-                          <p className="text-gray-900 text-base font-bold bg-[#8B5CF6]/10 px-4 py-2 rounded-full text-[#8B5CF6]">สแกนเพื่อจ่าย ฿{totalPrice.toFixed(2)}</p>
+                          <p className="text-gray-900 text-base font-bold bg-[#8B5CF6]/10 px-4 py-2 rounded-full text-[#8B5CF6] mb-4">สแกนเพื่อจ่าย ฿{totalPrice.toFixed(2)}</p>
+                          <div className="w-full flex flex-col items-center border-t border-gray-100 pt-4 mt-2">
+                            <label className="text-sm font-semibold text-gray-700 mb-2">อัปโหลดสลิปโอนเงินเพื่อตรวจสอบ</label>
+                            <input 
+                              type="file" 
+                              accept="image/jpeg,image/png" 
+                              onChange={(e) => setSlipFile(e.target.files?.[0] || null)}
+                              className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#8B5CF6]/10 file:text-[#8B5CF6] hover:file:bg-[#8B5CF6]/20 cursor-pointer border border-gray-200 rounded-xl p-2"
+                            />
+                            {slipFile && (
+                              <p className="text-xs text-green-600 mt-2 font-semibold">แนบไฟล์สำเร็จ: {slipFile.name}</p>
+                            )}
+                          </div>
                         </motion.div>
                       )}
 
