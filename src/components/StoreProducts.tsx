@@ -74,6 +74,8 @@ export default function StoreProducts({ products }: { products: any[] }) {
 
     setLoading(true)
     
+    let transRef = undefined
+
     if (paymentMethod === 'truewallet') {
       const res = await processTrueMoneyVoucher(voucherLink, totalPrice)
       if (!res.success) {
@@ -90,6 +92,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
         setLoading(false)
         return
       }
+      transRef = res.transRef
     }
     
     await createOrder({
@@ -98,7 +101,8 @@ export default function StoreProducts({ products }: { products: any[] }) {
       amount: totalPrice,
       paymentMethod,
       quantity,
-      promoCode: promoDiscount ? promoCode : undefined
+      promoCode: promoDiscount ? promoCode : undefined,
+      transRef
     })
     
     setLoading(false)

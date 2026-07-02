@@ -142,9 +142,20 @@ export async function processSlipVerification(formData: FormData, expectedAmount
 
     // The API might not return `success: true`. Let's just check if there's no error code or if response is ok.
     if (response.ok && !data.code && data.data) {
+      // Find transRef
+      const transRef = data.data?.transRef || data.data?.data?.transRef || data.transRef || null
+      
+      if (transRef) {
+        // Check for duplicates
+        const existingOrder = await db.collection('orders').where('transRef', '==', transRef).limit(1).get()
+        if (!existingOrder.empty) {
+          return { success: false, error: 'สลิปนี้ถูกใช้งานไปแล้ว (Duplicate Slip)' }
+        }
+      }
+
       // Typically, amount is somewhere in data. Let's just accept it if it's a 200 OK without an error code
       // We can refine this once we see a successful payload
-      return { success: true, data: data.data }
+      return { success: true, data: data.data, transRef }
     } else {
       // Return the exact JSON so we can debug what the API actually said!
       return { success: false, error: data.message || `API Response: ${JSON.stringify(data)}` }
@@ -193,7 +204,7 @@ export async function processTrueMoneyVoucher(voucherLink: string, expectedAmoun
   }
 }
 
-export async function createOrder(data: { productId: string, customerName: string, amount: number, paymentMethod: string, quantity: number, promoCode?: string }) {
+export async function createOrder(data: { productId: string, customerName: string, amount: number, paymentMethod: string, quantity: number, promoCode?: string, transRef?: string }) {
   const productRef = db.collection('products').doc(data.productId)
   const productSnap = await productRef.get()
   
@@ -237,6 +248,7 @@ export async function createOrder(data: { productId: string, customerName: strin
     paymentMethod: data.paymentMethod,
     promoCode: appliedPromoCode,
     status: 'completed',
+    transRef: data.transRef || null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   }
