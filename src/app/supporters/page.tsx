@@ -58,70 +58,100 @@ export default async function SupportersPage() {
         {/* Podium Section */}
         <div className="flex flex-col md:flex-row justify-center items-end gap-4 md:gap-8 mb-24 h-[400px]">
           {/* Rank 2 */}
-          {podiumOrder[0] && (
-            <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-2xl order-2 md:order-1 relative z-20 group">
-              <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500">
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-gray-300 drop-shadow-[0_0_10px_rgba(209,213,219,0.5)]">
-                  <Medal size={48} />
-                </div>
+          <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-2xl order-2 md:order-1 relative z-20 group">
+            <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500 min-h-[260px] flex items-end">
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-gray-300 drop-shadow-[0_0_10px_rgba(209,213,219,0.5)]">
+                <Medal size={48} />
+              </div>
+              {podiumOrder[0] ? (
                 <img 
                   src={`https://skins.mcstats.com/body/front/${podiumOrder[0].uuid}`} 
                   alt={podiumOrder[0].username} 
                   className="w-32 h-[260px] object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
                 />
-              </div>
-              <div className="bg-gradient-to-b from-gray-300 to-gray-500 w-full rounded-t-2xl p-6 text-center shadow-[0_-10px_30px_rgba(209,213,219,0.2)] border-t border-white/20 h-[140px] flex flex-col justify-end relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/brushed-alum.png')] opacity-20 mix-blend-overlay"></div>
-                <h3 className="text-2xl font-black text-black drop-shadow-sm truncate">{podiumOrder[0].username}</h3>
-                <p className="text-black/80 font-bold mt-1">{podiumOrder[0].totalAmount.toLocaleString()} THB</p>
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 text-black/20 text-6xl font-black">2</div>
-              </div>
+              ) : (
+                <div className="w-32 h-[200px] flex items-center justify-center opacity-30">
+                  <span className="text-white font-bold">รอผู้สนับสนุน</span>
+                </div>
+              )}
             </div>
-          )}
+            <div className="bg-gradient-to-b from-gray-300 to-gray-500 w-full rounded-t-2xl p-6 text-center shadow-[0_-10px_30px_rgba(209,213,219,0.2)] border-t border-white/20 h-[140px] flex flex-col justify-end relative overflow-hidden">
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/brushed-alum.png')] opacity-20 mix-blend-overlay"></div>
+              {podiumOrder[0] ? (
+                <>
+                  <h3 className="text-2xl font-black text-black drop-shadow-sm truncate">{podiumOrder[0].username}</h3>
+                  <p className="text-black/80 font-bold mt-1">{podiumOrder[0].totalAmount.toLocaleString()} THB</p>
+                </>
+              ) : (
+                <h3 className="text-xl font-black text-black/50 drop-shadow-sm">ว่าง</h3>
+              )}
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 text-black/20 text-6xl font-black">2</div>
+            </div>
+          </div>
 
           {/* Rank 1 */}
-          {podiumOrder[1] && (
-            <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-[0_0_50px_rgba(234,179,8,0.3)] order-1 md:order-2 relative z-30 group">
-              <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500">
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 text-yellow-400 drop-shadow-[0_0_20px_rgba(234,179,8,0.8)]">
-                  <Crown size={64} />
-                </div>
+          <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-[0_0_50px_rgba(234,179,8,0.3)] order-1 md:order-2 relative z-30 group">
+            <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500 min-h-[300px] flex items-end">
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 text-yellow-400 drop-shadow-[0_0_20px_rgba(234,179,8,0.8)]">
+                <Crown size={64} />
+              </div>
+              {podiumOrder[1] ? (
                 <img 
                   src={`https://skins.mcstats.com/body/front/${podiumOrder[1].uuid}`} 
                   alt={podiumOrder[1].username} 
                   className="w-40 h-[300px] object-contain drop-shadow-[0_15px_30px_rgba(234,179,8,0.4)]"
                 />
-              </div>
-              <div className="bg-gradient-to-b from-yellow-300 via-yellow-500 to-orange-600 w-full rounded-t-3xl p-8 text-center shadow-[0_-20px_50px_rgba(234,179,8,0.4)] border-t-2 border-yellow-200 h-[180px] flex flex-col justify-end relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/gold-scale.png')] opacity-20 mix-blend-overlay"></div>
-                <h3 className="text-3xl font-black text-black drop-shadow-sm truncate">{podiumOrder[1].username}</h3>
-                <p className="text-black/90 font-black mt-2 text-xl">{podiumOrder[1].totalAmount.toLocaleString()} THB</p>
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 text-black/10 text-8xl font-black">1</div>
-              </div>
+              ) : (
+                <div className="w-40 h-[220px] flex items-center justify-center opacity-30">
+                  <span className="text-white font-bold">รอผู้สนับสนุน</span>
+                </div>
+              )}
             </div>
-          )}
+            <div className="bg-gradient-to-b from-yellow-300 via-yellow-500 to-orange-600 w-full rounded-t-3xl p-8 text-center shadow-[0_-20px_50px_rgba(234,179,8,0.4)] border-t-2 border-yellow-200 h-[180px] flex flex-col justify-end relative overflow-hidden">
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/gold-scale.png')] opacity-20 mix-blend-overlay"></div>
+              {podiumOrder[1] ? (
+                <>
+                  <h3 className="text-3xl font-black text-black drop-shadow-sm truncate">{podiumOrder[1].username}</h3>
+                  <p className="text-black/90 font-black mt-2 text-xl">{podiumOrder[1].totalAmount.toLocaleString()} THB</p>
+                </>
+              ) : (
+                <h3 className="text-2xl font-black text-black/50 drop-shadow-sm">ว่าง</h3>
+              )}
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 text-black/10 text-8xl font-black">1</div>
+            </div>
+          </div>
 
           {/* Rank 3 */}
-          {podiumOrder[2] && (
-            <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-xl order-3 md:order-3 relative z-10 group">
-              <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500">
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-amber-600 drop-shadow-[0_0_10px_rgba(217,119,6,0.5)]">
-                  <Medal size={40} />
-                </div>
+          <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-xl order-3 md:order-3 relative z-10 group">
+            <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500 min-h-[220px] flex items-end">
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-amber-600 drop-shadow-[0_0_10px_rgba(217,119,6,0.5)]">
+                <Medal size={40} />
+              </div>
+              {podiumOrder[2] ? (
                 <img 
                   src={`https://skins.mcstats.com/body/front/${podiumOrder[2].uuid}`} 
                   alt={podiumOrder[2].username} 
                   className="w-28 h-[220px] object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
                 />
-              </div>
-              <div className="bg-gradient-to-b from-amber-600 to-amber-900 w-full rounded-t-2xl p-4 text-center shadow-[0_-10px_30px_rgba(217,119,6,0.2)] border-t border-amber-500/50 h-[110px] flex flex-col justify-end relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')] opacity-20 mix-blend-overlay"></div>
-                <h3 className="text-xl font-black text-white drop-shadow-sm truncate">{podiumOrder[2].username}</h3>
-                <p className="text-amber-200 font-bold mt-1">{podiumOrder[2].totalAmount.toLocaleString()} THB</p>
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 text-black/20 text-5xl font-black">3</div>
-              </div>
+              ) : (
+                <div className="w-28 h-[160px] flex items-center justify-center opacity-30">
+                  <span className="text-white font-bold">รอผู้สนับสนุน</span>
+                </div>
+              )}
             </div>
-          )}
+            <div className="bg-gradient-to-b from-amber-600 to-amber-900 w-full rounded-t-2xl p-4 text-center shadow-[0_-10px_30px_rgba(217,119,6,0.2)] border-t border-amber-500/50 h-[110px] flex flex-col justify-end relative overflow-hidden">
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')] opacity-20 mix-blend-overlay"></div>
+              {podiumOrder[2] ? (
+                <>
+                  <h3 className="text-xl font-black text-white drop-shadow-sm truncate">{podiumOrder[2].username}</h3>
+                  <p className="text-amber-200 font-bold mt-1">{podiumOrder[2].totalAmount.toLocaleString()} THB</p>
+                </>
+              ) : (
+                <h3 className="text-lg font-black text-white/50 drop-shadow-sm">ว่าง</h3>
+              )}
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 text-black/20 text-5xl font-black">3</div>
+            </div>
+          </div>
         </div>
 
         {/* Other Ranks (4-10) */}
