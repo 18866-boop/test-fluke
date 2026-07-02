@@ -17,7 +17,7 @@ export default async function Home() {
       <nav className="glass-nav sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold text-[#c4bbf0] flex items-center gap-3">
-            <img src="https://cdn.discordapp.com/attachments/1491091439797403699/1501593391413198980/file_0000000088d47207a07875a29649ad84-removebg-preview.png?ex=6a4525d2&is=6a43d452&hm=738c6c52b0dbf050f610dd979b443fac026d5a8fdce4c0e87aae12a9fc162ef3&" alt="Veltrixcraft Logo" className="w-12 h-12 object-contain" />
+            <Box size={32} className="text-[#927fbf]" />
             Veltrixcraft
           </Link>
           <NavbarAuthButton />
