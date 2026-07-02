@@ -56,7 +56,7 @@ export default async function SupportersPage() {
         </div>
 
         {/* Podium Section */}
-        <div className="flex flex-col md:flex-row justify-center items-end gap-8 md:gap-0 mb-24 min-h-[400px]">
+        <div className="flex flex-col md:flex-row justify-center items-end gap-8 md:gap-0 mt-24 mb-24 min-h-[400px]">
           {/* Rank 2 */}
           <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-2xl order-2 md:order-1 relative z-20 group">
             <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500 min-h-[300px] flex flex-col items-center justify-end">
