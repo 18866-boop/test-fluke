@@ -5,10 +5,31 @@ import { Crown, Trophy, Medal, Star } from 'lucide-react'
 
 export const revalidate = 0
 
+async function getUuid(username: string): Promise<string> {
+  try {
+    const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`, {
+      next: { revalidate: 86400 } // cache for 24 hours
+    })
+    if (!res.ok) return username // fallback to username if fails
+    const data = await res.json()
+    return data.id || username
+  } catch (error) {
+    return username
+  }
+}
+
 export default async function SupportersPage() {
   const supporters = await getTopSupporters()
-  const top3 = supporters.slice(0, 3)
-  const rest = supporters.slice(3, 10)
+  // Fetch UUIDs for all supporters to use with mcstats.com
+  const supportersWithUuids = await Promise.all(
+    supporters.map(async (supporter) => {
+      const uuid = await getUuid(supporter.username)
+      return { ...supporter, uuid }
+    })
+  )
+
+  const top3 = supportersWithUuids.slice(0, 3)
+  const rest = supportersWithUuids.slice(3, 10)
 
   // Reorder top 3 for podium (Rank 2, Rank 1, Rank 3)
   const podiumOrder = [
@@ -44,7 +65,7 @@ export default async function SupportersPage() {
                   <Medal size={48} />
                 </div>
                 <img 
-                  src={`https://minotar.net/armor/body/${podiumOrder[0].username}/260.png`} 
+                  src={`https://skins.mcstats.com/body/front/${podiumOrder[0].uuid}`} 
                   alt={podiumOrder[0].username} 
                   className="w-32 h-[260px] object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
                 />
@@ -66,7 +87,7 @@ export default async function SupportersPage() {
                   <Crown size={64} />
                 </div>
                 <img 
-                  src={`https://minotar.net/armor/body/${podiumOrder[1].username}/300.png`} 
+                  src={`https://skins.mcstats.com/body/front/${podiumOrder[1].uuid}`} 
                   alt={podiumOrder[1].username} 
                   className="w-40 h-[300px] object-contain drop-shadow-[0_15px_30px_rgba(234,179,8,0.4)]"
                 />
@@ -88,7 +109,7 @@ export default async function SupportersPage() {
                   <Medal size={40} />
                 </div>
                 <img 
-                  src={`https://minotar.net/armor/body/${podiumOrder[2].username}/220.png`} 
+                  src={`https://skins.mcstats.com/body/front/${podiumOrder[2].uuid}`} 
                   alt={podiumOrder[2].username} 
                   className="w-28 h-[220px] object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
                 />
@@ -117,7 +138,7 @@ export default async function SupportersPage() {
                       {idx + 4}
                     </div>
                     <img 
-                      src={`https://minotar.net/helm/${supporter.username}/100.png`} 
+                      src={`https://skins.mcstats.com/face/${supporter.uuid}`} 
                       alt={supporter.username} 
                       className="w-16 h-16 rounded-xl drop-shadow-md"
                     />
