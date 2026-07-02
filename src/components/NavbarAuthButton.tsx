@@ -21,7 +21,7 @@ export default function NavbarAuthButton() {
           </Link>
         )}
         <div className="flex items-center gap-2 bg-[#363b4e] px-3 py-1.5 rounded-full border border-white/10">
-          <img src={`https://mc-heads.net/avatar/${user.username}/32`} alt={user.username} className="w-6 h-6 rounded-md bg-black/20" />
+          <img src={`https://mc-heads.net/avatar/${user.uuid || user.username}/32`} alt={user.username} className="w-6 h-6 rounded-md bg-black/20" />
           <span className="text-sm font-semibold">{user.username}</span>
         </div>
         <button onClick={logout} className="text-white/50 hover:text-red-400 transition-colors" title="ออกจากระบบ">

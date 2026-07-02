@@ -14,10 +14,35 @@ export default function LoginModal() {
 
   const { isLoginModalOpen, setLoginModalOpen, login } = auth
 
-  const handleLogin = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!username.trim()) return
-    login(username.trim(), platform)
+    setError('')
+    const name = username.trim()
+    if (!name) return
+
+    if (platform === 'java') {
+      setLoading(true)
+      try {
+        const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${name}`)
+        if (!res.ok) {
+          setError('ไม่พบชื่อผู้เล่นนี้ในระบบ (Java Edition)')
+          setLoading(false)
+          return
+        }
+        const data = await res.json()
+        login(name, platform, data.uuid)
+      } catch (err) {
+        setError('เกิดข้อผิดพลาดในการตรวจสอบชื่อ')
+        setLoading(false)
+        return
+      }
+      setLoading(false)
+    } else {
+      login(name, platform)
+    }
   }
 
   return (
@@ -90,14 +115,21 @@ export default function LoginModal() {
                 />
               </div>
 
-              <motion.button 
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all"
-              >
-                เข้าสู่ระบบ <ArrowRight size={18} />
-              </motion.button>
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-4 rounded-xl font-bold bg-[#8B5CF6] hover:bg-[#7C3AED] text-white transition-colors shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {loading ? 'กำลังตรวจสอบ...' : (
+                    <>
+                      <span>เข้าสู่ระบบ</span>
+                      <ArrowRight size={20} />
+                    </>
+                  )}
+                </button>
+                {error && <p className="text-red-400 text-sm mt-3 text-center">{error}</p>}
+              </div>
             </form>
           </motion.div>
         </motion.div>

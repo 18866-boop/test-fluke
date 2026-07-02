@@ -5,11 +5,12 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 interface User {
   username: string;
   platform: 'java' | 'bedrock';
+  uuid?: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (username: string, platform: 'java' | 'bedrock') => void;
+  login: (username: string, platform: 'java' | 'bedrock', uuid?: string) => void;
   logout: () => void;
   isLoginModalOpen: boolean;
   setLoginModalOpen: (isOpen: boolean) => void;
@@ -32,8 +33,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const login = (username: string, platform: 'java' | 'bedrock') => {
-    const newUser = { username, platform }
+  const login = (username: string, platform: 'java' | 'bedrock', uuid?: string) => {
+    const newUser = { username, platform, uuid }
     setUser(newUser)
     localStorage.setItem('veltrix_user', JSON.stringify(newUser))
     setLoginModalOpen(false)
