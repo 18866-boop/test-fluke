@@ -4,6 +4,7 @@ import './globals.css'
 import { AuthProvider } from '@/context/AuthContext'
 import LoginModal from '@/components/LoginModal'
 import IPhoneDock from '@/components/IPhoneDock'
+import WalkingCharacter from '@/components/WalkingCharacter'
 
 const kanit = Kanit({ subsets: ['thai', 'latin'], weight: ['300', '400', '500', '600', '700'] })
 
@@ -28,6 +29,7 @@ export default function RootLayout({
 
           <IPhoneDock />
           <LoginModal />
+          <WalkingCharacter />
           {children}
         </AuthProvider>
       </body>
