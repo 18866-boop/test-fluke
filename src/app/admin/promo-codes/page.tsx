@@ -55,11 +55,27 @@ export default async function PromoCodesPage() {
                   {code.currentUses} / {code.maxUses === 0 ? '∞' : code.maxUses}
                 </td>
                 <td className="p-4">
-                  {code.isActive && (code.maxUses === 0 || code.currentUses < code.maxUses) ? (
-                    <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold border border-green-500/30">ใช้งานได้</span>
-                  ) : (
-                    <span className="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-bold border border-red-500/30">ระงับ/เต็ม</span>
-                  )}
+                  {(() => {
+                    const isExpired = code.expiresAt && new Date() > new Date(code.expiresAt)
+                    const isUsable = code.isActive && !isExpired && (code.maxUses === 0 || code.currentUses < code.maxUses)
+                    
+                    return (
+                      <div className="flex flex-col gap-1 items-start">
+                        {isUsable ? (
+                          <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold border border-green-500/30">ใช้งานได้</span>
+                        ) : (
+                          <span className="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-bold border border-red-500/30">
+                            {!code.isActive ? 'ถูกระงับ' : isExpired ? 'หมดอายุ' : 'เต็ม'}
+                          </span>
+                        )}
+                        {code.expiresAt && (
+                          <span className="text-[10px] text-white/40">
+                            หมด: {new Date(code.expiresAt).toLocaleString('th-TH')}
+                          </span>
+                        )}
+                      </div>
+                    )
+                  })()}
                 </td>
                 <td className="p-4 text-right">
                   <DeletePromoButton id={code.id} />

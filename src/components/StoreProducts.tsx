@@ -26,6 +26,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
   const [paymentMethod, setPaymentMethod] = useState<'promptpay'|'truewallet'>('promptpay')
   const [voucherLink, setVoucherLink] = useState('')
   const [slipFile, setSlipFile] = useState<File | null>(null)
+  const [serverSelection, setServerSelection] = useState<'survival' | 'oneblock'>('survival')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [quantity, setQuantity] = useState(1)
@@ -102,7 +103,8 @@ export default function StoreProducts({ products }: { products: any[] }) {
       paymentMethod,
       quantity,
       promoCode: promoDiscount ? promoCode : undefined,
-      transRef
+      transRef,
+      server: serverSelection
     })
     
     setLoading(false)
@@ -285,12 +287,40 @@ export default function StoreProducts({ products }: { products: any[] }) {
                   <form onSubmit={handleCheckout} className="space-y-5">
                     <div className="bg-[#13141c] p-4 rounded-2xl flex items-center gap-4 mb-4 border border-white/5 shadow-inner">
                       <div className="relative">
-                        <img src={`https://mc-heads.net/avatar/${auth?.user?.username}/64`} alt="Avatar" className="w-14 h-14 rounded-xl bg-[#2A2D3E]" />
+                        <img src={`https://mc-heads.net/avatar/${auth?.user?.uuid || auth?.user?.username}/64`} alt="Avatar" className="w-14 h-14 rounded-xl bg-[#2A2D3E]" />
                         <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-[#13141c]"></div>
                       </div>
                       <div>
                         <p className="text-xs text-white/50 uppercase tracking-wider font-semibold mb-1">สั่งซื้อให้ตัวละคร</p>
                         <p className="font-bold text-lg text-white">{auth?.user?.username}</p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-3 text-white/80 ml-1">เลือกเซิร์ฟเวอร์ที่ต้องการรับไอเทม</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setServerSelection('survival')}
+                          className={`py-3 px-4 rounded-xl border transition-all ${
+                            serverSelection === 'survival' 
+                              ? 'bg-[#8B5CF6]/20 border-[#8B5CF6] text-white shadow-[0_0_15px_rgba(139,92,246,0.2)]' 
+                              : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'
+                          }`}
+                        >
+                          <span className="font-bold">Survival</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setServerSelection('oneblock')}
+                          className={`py-3 px-4 rounded-xl border transition-all ${
+                            serverSelection === 'oneblock' 
+                              ? 'bg-[#8B5CF6]/20 border-[#8B5CF6] text-white shadow-[0_0_15px_rgba(139,92,246,0.2)]' 
+                              : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'
+                          }`}
+                        >
+                          <span className="font-bold">Oneblock</span>
+                        </button>
                       </div>
                     </div>
                     

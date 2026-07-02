@@ -74,6 +74,10 @@ export async function verifyPromoCode(code: string) {
     return { success: false, error: 'โค้ดส่วนลดนี้ถูกระงับการใช้งาน' }
   }
 
+  if (promoData.expiresAt && new Date() > new Date(promoData.expiresAt)) {
+    return { success: false, error: 'โค้ดส่วนลดนี้หมดอายุแล้ว' }
+  }
+
   if (promoData.maxUses > 0 && promoData.currentUses >= promoData.maxUses) {
     return { success: false, error: 'โค้ดส่วนลดนี้ถูกใช้ครบจำนวนที่กำหนดแล้ว' }
   }
@@ -90,6 +94,7 @@ export async function createPromoCode(formData: FormData) {
   const discountType = formData.get('discountType') as string
   const discountValue = parseFloat(formData.get('discountValue') as string)
   const maxUses = parseInt(formData.get('maxUses') as string) || 0
+  const expiresAt = formData.get('expiresAt') as string || null
 
   // Check if code exists
   const existSnap = await db.collection('promo_codes').where('code', '==', code).get()
@@ -102,6 +107,7 @@ export async function createPromoCode(formData: FormData) {
     discountType,
     discountValue,
     maxUses,
+    expiresAt,
     currentUses: 0,
     isActive: true,
     createdAt: new Date().toISOString()
@@ -211,7 +217,7 @@ export async function processTrueMoneyVoucher(voucherLink: string, expectedAmoun
   }
 }
 
-export async function createOrder(data: { productId: string, customerName: string, amount: number, paymentMethod: string, quantity: number, promoCode?: string, transRef?: string }) {
+export async function createOrder(data: { productId: string, customerName: string, amount: number, paymentMethod: string, quantity: number, promoCode?: string, transRef?: string, server?: string }) {
   const productRef = db.collection('products').doc(data.productId)
   const productSnap = await productRef.get()
   
@@ -229,7 +235,9 @@ export async function createOrder(data: { productId: string, customerName: strin
       const promoDoc = promoSnap.docs[0]
       const promoData = promoDoc.data()
       
-      if (promoData.isActive && (promoData.maxUses === 0 || promoData.currentUses < promoData.maxUses)) {
+      const isNotExpired = !promoData.expiresAt || new Date() <= new Date(promoData.expiresAt)
+
+      if (promoData.isActive && isNotExpired && (promoData.maxUses === 0 || promoData.currentUses < promoData.maxUses)) {
         // Calculate new amount based on quantity * base price
         const baseAmount = product.price * data.quantity
         if (promoData.discountType === 'percent') {
@@ -256,6 +264,7 @@ export async function createOrder(data: { productId: string, customerName: strin
     promoCode: appliedPromoCode,
     status: 'completed',
     transRef: data.transRef || null,
+    server: data.server || 'survival',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   }

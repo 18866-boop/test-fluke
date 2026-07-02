@@ -74,15 +74,25 @@ export default function NewPromoCodePage() {
           </div>
         </div>
 
-        <div>
-          <label className="block mb-2 text-sm text-[#c4bbf0]">จำกัดจำนวนครั้ง (0 = ไม่จำกัด)</label>
-          <input 
-            type="number" 
-            name="maxUses"
-            defaultValue="0"
-            min="0"
-            className="w-full bg-[#363b4e]/50 border border-[#c4bbf0]/20 rounded-xl p-3 outline-none focus:border-[#927fbf]" 
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 text-sm text-[#c4bbf0]">จำกัดจำนวนครั้ง (0 = ไม่จำกัด)</label>
+            <input 
+              type="number" 
+              name="maxUses"
+              defaultValue="0"
+              min="0"
+              className="w-full bg-[#363b4e]/50 border border-[#c4bbf0]/20 rounded-xl p-3 outline-none focus:border-[#927fbf]" 
+            />
+          </div>
+          <div>
+            <label className="block mb-2 text-sm text-[#c4bbf0]">วันหมดอายุ (เว้นว่าง = ไม่มีวันหมดอายุ)</label>
+            <input 
+              type="datetime-local" 
+              name="expiresAt"
+              className="w-full bg-[#363b4e]/50 border border-[#c4bbf0]/20 rounded-xl p-3 outline-none focus:border-[#927fbf] text-white" 
+            />
+          </div>
         </div>
 
         <button 

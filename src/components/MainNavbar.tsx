@@ -15,6 +15,8 @@ export default function MainNavbar() {
           </Link>
           <div className="hidden md:flex items-center gap-4">
             <Link href="/" className="text-white/80 hover:text-white font-medium transition-colors">ร้านค้า</Link>
+            <Link href="/rules" className="text-white/80 hover:text-white font-medium transition-colors">กฎกติกา</Link>
+            <Link href="/staff" className="text-white/80 hover:text-white font-medium transition-colors">ทีมงาน</Link>
             <Link href="/supporters" className="text-white/80 hover:text-[#c4bbf0] font-bold transition-colors flex items-center gap-1">
               Top Donators
             </Link>
