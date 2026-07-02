@@ -83,7 +83,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
       }
     } else if (paymentMethod === 'promptpay') {
       const formData = new FormData()
-      formData.append('file', slipFile)
+      formData.append('file', slipFile as Blob)
       const res = await processSlipVerification(formData, totalPrice)
       if (!res.success) {
         alert(res.error)
