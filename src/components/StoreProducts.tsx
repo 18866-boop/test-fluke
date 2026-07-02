@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import generatePayload from 'promptpay-qr'
 import { X, CreditCard, Gift, Loader2, Check } from 'lucide-react'
-import { createOrder, verifyPromoCode } from '@/app/actions'
+import { createOrder, verifyPromoCode, processTrueMoneyVoucher } from '@/app/actions'
 import { useAuth } from '@/context/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -59,10 +59,26 @@ export default function StoreProducts({ products }: { products: any[] }) {
     e.preventDefault()
     if (!auth?.user) return
 
+    if (paymentMethod === 'truewallet') {
+      if (!voucherLink.trim()) {
+        alert('กรุณากรอกลิงก์ซองของขวัญ TrueWallet')
+        return
+      }
+    }
+
     setLoading(true)
     
-    // Fake payment processing delay
-    await new Promise(r => setTimeout(r, 2000))
+    if (paymentMethod === 'truewallet') {
+      const res = await processTrueMoneyVoucher(voucherLink, totalPrice)
+      if (!res.success) {
+        alert(res.error)
+        setLoading(false)
+        return
+      }
+    } else {
+      // Fake payment processing delay for PromptPay
+      await new Promise(r => setTimeout(r, 2000))
+    }
     
     await createOrder({
       productId: selectedProduct.id,

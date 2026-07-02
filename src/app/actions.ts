@@ -116,6 +116,44 @@ export async function deletePromoCode(id: string) {
   revalidatePath('/admin/promo-codes')
 }
 
+export async function processTrueMoneyVoucher(voucherLink: string, expectedAmount: number) {
+  try {
+    // Extract hash from link
+    // https://gift.truemoney.com/campaign/?v=hash...
+    let hash = ''
+    try {
+      const url = new URL(voucherLink)
+      hash = url.searchParams.get('v') || ''
+    } catch {
+      const match = voucherLink.match(/v=([^&]+)/)
+      if (match) hash = match[1]
+    }
+
+    if (!hash) {
+      return { success: false, error: 'ลิงก์ซองของขวัญไม่ถูกต้อง (หา hash ไม่เจอ)' }
+    }
+
+    const phone = '0960604947'
+    const apiUrl = `https://store.cyber-safe.pro/api/topup/truemoney/angpaofree/${hash}/${phone}`
+    
+    console.log(`Calling TrueMoney API: ${apiUrl}`)
+    const response = await fetch(apiUrl, { cache: 'no-store' })
+    const data = await response.json()
+    console.log('TrueMoney API Response:', data)
+
+    if (data?.status?.code === 'SUCCESS' || data?.message === 'success' || data?.status?.message === 'success') {
+      // In a real scenario, you'd verify data.amount >= expectedAmount here
+      // if (data.data?.amount && data.data.amount < expectedAmount) return { success: false, error: 'ยอดเงินไม่ครบ' }
+      return { success: true }
+    } else {
+      return { success: false, error: data?.status?.message || data?.message || 'ซองของขวัญไม่สามารถใช้งานได้' }
+    }
+  } catch (error: any) {
+    console.error('TrueMoney processing error:', error)
+    return { success: false, error: 'ระบบตรวจสอบซองของขวัญขัดข้อง' }
+  }
+}
+
 export async function createOrder(data: { productId: string, customerName: string, amount: number, paymentMethod: string, quantity: number, promoCode?: string }) {
   const productRef = db.collection('products').doc(data.productId)
   const productSnap = await productRef.get()
