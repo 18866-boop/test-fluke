@@ -38,13 +38,13 @@ export default async function SupportersPage() {
         <div className="flex flex-col md:flex-row justify-center items-end gap-4 md:gap-8 mb-24 h-[400px]">
           {/* Rank 2 */}
           {podiumOrder[0] && (
-            <div className="flex flex-col items-center w-full md:w-1/3 animate-[float_8s_ease-in-out_infinite_alternate] drop-shadow-2xl order-2 md:order-1 relative z-20">
-              <div className="relative mb-4">
+            <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-2xl order-2 md:order-1 relative z-20 group">
+              <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500">
                 <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-gray-300 drop-shadow-[0_0_10px_rgba(209,213,219,0.5)]">
                   <Medal size={48} />
                 </div>
                 <img 
-                  src={`https://mc-heads.net/body/${podiumOrder[0].username}`} 
+                  src={`https://minotar.net/armor/body/${podiumOrder[0].username}/260.png`} 
                   alt={podiumOrder[0].username} 
                   className="w-32 h-[260px] object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
                 />
@@ -60,13 +60,13 @@ export default async function SupportersPage() {
 
           {/* Rank 1 */}
           {podiumOrder[1] && (
-            <div className="flex flex-col items-center w-full md:w-1/3 animate-[float_7s_ease-in-out_infinite_alternate] drop-shadow-[0_0_50px_rgba(234,179,8,0.3)] order-1 md:order-2 relative z-30">
-              <div className="relative mb-4">
+            <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-[0_0_50px_rgba(234,179,8,0.3)] order-1 md:order-2 relative z-30 group">
+              <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500">
                 <div className="absolute -top-12 left-1/2 -translate-x-1/2 text-yellow-400 drop-shadow-[0_0_20px_rgba(234,179,8,0.8)]">
                   <Crown size={64} />
                 </div>
                 <img 
-                  src={`https://mc-heads.net/body/${podiumOrder[1].username}`} 
+                  src={`https://minotar.net/armor/body/${podiumOrder[1].username}/300.png`} 
                   alt={podiumOrder[1].username} 
                   className="w-40 h-[300px] object-contain drop-shadow-[0_15px_30px_rgba(234,179,8,0.4)]"
                 />
@@ -82,13 +82,13 @@ export default async function SupportersPage() {
 
           {/* Rank 3 */}
           {podiumOrder[2] && (
-            <div className="flex flex-col items-center w-full md:w-1/3 animate-[float_9s_ease-in-out_infinite_alternate] drop-shadow-xl order-3 md:order-3 relative z-10">
-              <div className="relative mb-4">
+            <div className="flex flex-col items-center w-full md:w-1/3 drop-shadow-xl order-3 md:order-3 relative z-10 group">
+              <div className="relative mb-4 group-hover:-translate-y-2 transition-transform duration-500">
                 <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-amber-600 drop-shadow-[0_0_10px_rgba(217,119,6,0.5)]">
                   <Medal size={40} />
                 </div>
                 <img 
-                  src={`https://mc-heads.net/body/${podiumOrder[2].username}`} 
+                  src={`https://minotar.net/armor/body/${podiumOrder[2].username}/220.png`} 
                   alt={podiumOrder[2].username} 
                   className="w-28 h-[220px] object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
                 />
@@ -117,7 +117,7 @@ export default async function SupportersPage() {
                       {idx + 4}
                     </div>
                     <img 
-                      src={`https://mc-heads.net/avatar/${supporter.username}`} 
+                      src={`https://minotar.net/helm/${supporter.username}/100.png`} 
                       alt={supporter.username} 
                       className="w-16 h-16 rounded-xl drop-shadow-md"
                     />
