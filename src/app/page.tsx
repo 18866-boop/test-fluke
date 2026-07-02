@@ -13,8 +13,27 @@ import MainNavbar from '@/components/MainNavbar'
 export const revalidate = 0
 
 export default async function Home() {
-  const productsSnap = await db.collection('products').orderBy('price', 'asc').get()
-  const products = productsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })) as any[]
+  let products: any[] = []
+  let errorMsg = ''
+
+  try {
+    const productsSnap = await db.collection('products').orderBy('price', 'asc').get()
+    products = productsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })) as any[]
+  } catch (err: any) {
+    errorMsg = err.message || err.toString()
+  }
+
+  if (errorMsg) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-red-900 text-white p-6">
+        <div>
+          <h1 className="text-3xl font-bold mb-4">Database Error</h1>
+          <p className="font-mono bg-black/50 p-4 rounded-xl">{errorMsg}</p>
+          <p className="mt-4">Please check your Vercel Environment Variables (FIREBASE_PRIVATE_KEY, etc).</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
