@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { LayoutDashboard, Package, ShoppingCart, LogOut } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Ticket } from 'lucide-react'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +17,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
           <Link href="/admin/orders" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white/80 hover:text-white transition-all">
             <ShoppingCart size={20} className="text-indigo-400" /> รายการสั่งซื้อ
+          </Link>
+          <Link href="/admin/promo-codes" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white/80 hover:text-white transition-all">
+            <Ticket size={20} className="text-indigo-400" /> โค้ดส่วนลด
           </Link>
         </nav>
         <div className="p-4 mt-auto border-t border-white/5">

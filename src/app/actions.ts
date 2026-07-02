@@ -60,19 +60,105 @@ export async function deleteProduct(id: string) {
   revalidatePath('/')
 }
 
-export async function createOrder(data: { productId: string, customerName: string, amount: number, paymentMethod: string, quantity: number }) {
+export async function verifyPromoCode(code: string) {
+  const codeUpper = code.toUpperCase().trim()
+  const snap = await db.collection('promo_codes').where('code', '==', codeUpper).limit(1).get()
+  
+  if (snap.empty) {
+    return { success: false, error: 'ไม่พบโค้ดส่วนลดนี้' }
+  }
+
+  const promoData = snap.docs[0].data()
+  
+  if (!promoData.isActive) {
+    return { success: false, error: 'โค้ดส่วนลดนี้ถูกระงับการใช้งาน' }
+  }
+
+  if (promoData.maxUses > 0 && promoData.currentUses >= promoData.maxUses) {
+    return { success: false, error: 'โค้ดส่วนลดนี้ถูกใช้ครบจำนวนที่กำหนดแล้ว' }
+  }
+
+  return { 
+    success: true, 
+    discountType: promoData.discountType, 
+    discountValue: promoData.discountValue 
+  }
+}
+
+export async function createPromoCode(formData: FormData) {
+  const code = (formData.get('code') as string).toUpperCase().trim()
+  const discountType = formData.get('discountType') as string
+  const discountValue = parseFloat(formData.get('discountValue') as string)
+  const maxUses = parseInt(formData.get('maxUses') as string) || 0
+
+  // Check if code exists
+  const existSnap = await db.collection('promo_codes').where('code', '==', code).get()
+  if (!existSnap.empty) {
+    throw new Error('โค้ดนี้มีอยู่แล้ว')
+  }
+
+  await db.collection('promo_codes').add({
+    code,
+    discountType,
+    discountValue,
+    maxUses,
+    currentUses: 0,
+    isActive: true,
+    createdAt: new Date().toISOString()
+  })
+
+  revalidatePath('/admin/promo-codes')
+  redirect('/admin/promo-codes')
+}
+
+export async function deletePromoCode(id: string) {
+  await db.collection('promo_codes').doc(id).delete()
+  revalidatePath('/admin/promo-codes')
+}
+
+export async function createOrder(data: { productId: string, customerName: string, amount: number, paymentMethod: string, quantity: number, promoCode?: string }) {
   const productRef = db.collection('products').doc(data.productId)
   const productSnap = await productRef.get()
   
   if (!productSnap.exists) throw new Error('Product not found')
   const product = productSnap.data() as any
 
+  let finalAmount = data.amount
+  let appliedPromoCode = null
+
+  if (data.promoCode) {
+    const codeUpper = data.promoCode.toUpperCase().trim()
+    const promoSnap = await db.collection('promo_codes').where('code', '==', codeUpper).limit(1).get()
+    
+    if (!promoSnap.empty) {
+      const promoDoc = promoSnap.docs[0]
+      const promoData = promoDoc.data()
+      
+      if (promoData.isActive && (promoData.maxUses === 0 || promoData.currentUses < promoData.maxUses)) {
+        // Calculate new amount based on quantity * base price
+        const baseAmount = product.price * data.quantity
+        if (promoData.discountType === 'percent') {
+          finalAmount = baseAmount - (baseAmount * (promoData.discountValue / 100))
+        } else if (promoData.discountType === 'fixed') {
+          finalAmount = Math.max(0, baseAmount - promoData.discountValue)
+        }
+        
+        appliedPromoCode = codeUpper
+        // Increment usage
+        await promoDoc.ref.update({
+          currentUses: promoData.currentUses + 1
+        })
+      }
+    }
+  }
+
   const orderData = {
     productId: data.productId,
     customerName: data.customerName,
-    amount: data.amount,
+    amount: finalAmount,
     quantity: data.quantity,
     paymentMethod: data.paymentMethod,
+    promoCode: appliedPromoCode,
     status: 'completed',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()

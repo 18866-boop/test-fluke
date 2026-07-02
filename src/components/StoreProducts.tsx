@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import generatePayload from 'promptpay-qr'
 import { X, CreditCard, Gift, Loader2, Check } from 'lucide-react'
-import { createOrder } from '@/app/actions'
+import { createOrder, verifyPromoCode } from '@/app/actions'
 import { useAuth } from '@/context/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -28,9 +28,21 @@ export default function StoreProducts({ products }: { products: any[] }) {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [quantity, setQuantity] = useState(1)
+  const [promoCode, setPromoCode] = useState('')
+  const [promoDiscount, setPromoDiscount] = useState<{type: string, value: number} | null>(null)
+  const [promoError, setPromoError] = useState('')
+  const [promoLoading, setPromoLoading] = useState(false)
 
   // Generate PromptPay QR
-  const totalPrice = selectedProduct ? selectedProduct.price * quantity : 0
+  let basePrice = selectedProduct ? selectedProduct.price * quantity : 0
+  let totalPrice = basePrice
+  if (promoDiscount) {
+    if (promoDiscount.type === 'percent') {
+      totalPrice = basePrice - (basePrice * (promoDiscount.value / 100))
+    } else if (promoDiscount.type === 'fixed') {
+      totalPrice = Math.max(0, basePrice - promoDiscount.value)
+    }
+  }
   const qrCode = selectedProduct ? generatePayload('0812345678', { amount: totalPrice }) : ''
   const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCode)}`
 
@@ -57,7 +69,8 @@ export default function StoreProducts({ products }: { products: any[] }) {
       customerName: auth.user.username,
       amount: totalPrice,
       paymentMethod,
-      quantity
+      quantity,
+      promoCode: promoDiscount ? promoCode : undefined
     })
     
     setLoading(false)
@@ -66,7 +79,29 @@ export default function StoreProducts({ products }: { products: any[] }) {
       setSelectedProduct(null)
       setSuccess(false)
       setVoucherLink('')
+      setPromoCode('')
+      setPromoDiscount(null)
+      setPromoError('')
     }, 4000)
+  }
+
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) return
+    setPromoLoading(true)
+    setPromoError('')
+    try {
+      const res = await verifyPromoCode(promoCode)
+      if (res.success) {
+        setPromoDiscount({ type: res.discountType, value: res.discountValue })
+      } else {
+        setPromoError(res.error || 'โค้ดไม่ถูกต้อง')
+        setPromoDiscount(null)
+      }
+    } catch (e: any) {
+      setPromoError(e.message || 'เกิดข้อผิดพลาด')
+      setPromoDiscount(null)
+    }
+    setPromoLoading(false)
   }
 
   const categories = ['Ranks', 'Keys', 'Items']
@@ -150,7 +185,17 @@ export default function StoreProducts({ products }: { products: any[] }) {
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className="bg-[#1a1b26] border border-white/10 rounded-3xl w-full max-w-lg p-8 relative shadow-[0_0_50px_rgba(139,92,246,0.15)] max-h-[90vh] overflow-y-auto"
             >
-              <button onClick={() => !loading && !success && setSelectedProduct(null)} className="absolute top-5 right-5 text-white/40 hover:text-white hover:rotate-90 transition-all duration-300 bg-white/5 hover:bg-white/10 p-2 rounded-full">
+              <button 
+                onClick={() => {
+                  if (!loading && !success) {
+                    setSelectedProduct(null)
+                    setPromoCode('')
+                    setPromoDiscount(null)
+                    setPromoError('')
+                  }
+                }} 
+                className="absolute top-5 right-5 text-white/40 hover:text-white hover:rotate-90 transition-all duration-300 bg-white/5 hover:bg-white/10 p-2 rounded-full"
+              >
                 <X size={20} />
               </button>
               
@@ -182,7 +227,16 @@ export default function StoreProducts({ products }: { products: any[] }) {
                     <div className="flex-1 text-center sm:text-left">
                       <h2 className="text-2xl sm:text-3xl font-extrabold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-[#c4bbf0]">สั่งซื้อ {selectedProduct.name}</h2>
                       <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between mt-2 gap-3 sm:gap-0">
-                        <p className="text-xl font-semibold text-[#8B5CF6]">฿{totalPrice.toFixed(2)}</p>
+                        <div className="flex flex-col items-center sm:items-start">
+                          {promoDiscount ? (
+                            <>
+                              <p className="text-sm line-through text-white/40">฿{basePrice.toFixed(2)}</p>
+                              <p className="text-xl font-bold text-green-400">฿{totalPrice.toFixed(2)}</p>
+                            </>
+                          ) : (
+                            <p className="text-xl font-semibold text-[#8B5CF6]">฿{totalPrice.toFixed(2)}</p>
+                          )}
+                        </div>
                         {selectedProduct.category !== 'Ranks' && (
                           <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
                             <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-8 h-8 flex items-center justify-center rounded-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors">-</button>
@@ -206,6 +260,28 @@ export default function StoreProducts({ products }: { products: any[] }) {
                       </div>
                     </div>
                     
+                    <div>
+                      <label className="block text-sm font-medium mb-3 text-white/80 ml-1">โค้ดส่วนลด (ถ้ามี)</label>
+                      <div className="flex gap-2">
+                        <input 
+                          value={promoCode} 
+                          onChange={(e) => setPromoCode(e.target.value)} 
+                          placeholder="กรอกโค้ดส่วนลด..."
+                          className="flex-1 bg-[#13141c] border border-white/10 rounded-xl p-3 outline-none focus:border-[#8B5CF6] text-white uppercase font-mono transition-all"
+                        />
+                        <button 
+                          type="button"
+                          onClick={handleApplyPromo}
+                          disabled={promoLoading || !promoCode.trim()}
+                          className="bg-white/10 hover:bg-[#8B5CF6] text-white px-4 rounded-xl font-semibold transition-all disabled:opacity-50"
+                        >
+                          {promoLoading ? <Loader2 size={16} className="animate-spin" /> : 'ใช้โค้ด'}
+                        </button>
+                      </div>
+                      {promoError && <p className="text-red-400 text-sm mt-2 ml-1">{promoError}</p>}
+                      {promoDiscount && <p className="text-green-400 text-sm mt-2 ml-1">ใช้โค้ดส่วนลดแล้ว!</p>}
+                    </div>
+
                     <div>
                       <label className="block text-sm font-medium mb-3 text-white/80 ml-1">ช่องทางชำระเงิน</label>
                       <div className="flex flex-col sm:flex-row gap-4">
