@@ -10,7 +10,7 @@ export default function MainNavbar() {
         <div className="flex items-center gap-3">
           <MobileMenu />
           <Link href="/" className="text-2xl font-bold text-[#c4bbf0] flex items-center gap-3 hover:text-white transition-colors">
-            <img src="https://cdn.discordapp.com/attachments/1491091439797403699/1501593391413198980/file_0000000088d47207a07875a29649ad84-removebg-preview.png?ex=6a472012&is=6a45ce92&hm=87c41c7e7d7183d58f74e43b38328962248f5a6570f88d00f4d62144975a7fd8&" alt="Veltrixcraft Logo" className="w-10 h-10 object-contain drop-shadow-lg" />
+            <img src="https://cdn.discordapp.com/attachments/1491091439797403699/1501593391413198980/file_0000000088d47207a07875a29649ad84-removebg-preview.png?ex=6a472012&is=6a45ce92&hm=87c41c7e7d7183d58f74e43b38328962248f5a6570f88d00f4d62144975a7fd8&" alt="Veltrixcraft Logo" className="w-10 h-10 object-contain drop-shadow-lg mix-blend-screen" />
             Veltrixcraft
           </Link>
         </div>
