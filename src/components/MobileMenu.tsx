@@ -1,11 +1,17 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Crown, ShoppingCart, MessageSquare, Gamepad2 } from 'lucide-react'
 import Link from 'next/link'
 
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Prevent scrolling when menu is open
   useEffect(() => {
@@ -29,9 +35,10 @@ export default function MobileMenu() {
         <Menu size={28} />
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <>
+      {mounted && createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <div className="fixed inset-0 z-[9999]">
             {/* Backdrop */}
             <motion.div 
               initial={{ opacity: 0 }}
@@ -47,7 +54,7 @@ export default function MobileMenu() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-              className="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-[#1a1b26] border-r border-white/10 z-[101] flex flex-col shadow-2xl"
+              className="fixed top-0 left-0 h-[100dvh] w-80 max-w-[85vw] bg-[#1a1b26] border-r border-white/10 z-[101] flex flex-col shadow-2xl"
             >
               <div className="p-6 flex justify-between items-center border-b border-white/5">
                 <span className="text-xl font-bold text-white">เมนู</span>
@@ -93,9 +100,11 @@ export default function MobileMenu() {
                 </button>
               </div>
             </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+          </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   )
 }
