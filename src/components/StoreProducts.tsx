@@ -150,7 +150,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
                   <div className="absolute inset-0 bg-gradient-to-br from-[#c4bbf0]/0 to-[#c4bbf0]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   {product.imageUrl && (
                     <div className="relative w-full h-40 mb-4 rounded-xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center">
-                      <img src={product.imageUrl} alt={product.name} className="max-w-full max-h-full object-contain filter drop-shadow-lg group-hover:scale-110 transition-transform duration-500" />
+                      <img src={product.imageUrl} alt={product.name} className="max-w-full max-h-full object-contain filter drop-shadow-lg mix-blend-screen group-hover:scale-110 transition-transform duration-500" />
                     </div>
                   )}
                   <h3 className="text-xl font-bold text-[#c4bbf0] mb-2 relative z-10">{product.name}</h3>
@@ -221,7 +221,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
                   <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-6">
                     {selectedProduct.imageUrl && (
                       <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto sm:mx-0 rounded-2xl bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center overflow-hidden">
-                        <img src={selectedProduct.imageUrl} alt={selectedProduct.name} className="max-w-full max-h-full object-contain filter drop-shadow-md" />
+                        <img src={selectedProduct.imageUrl} alt={selectedProduct.name} className="max-w-full max-h-full object-contain filter drop-shadow-md mix-blend-screen" />
                       </div>
                     )}
                     <div className="flex-1 text-center sm:text-left">
