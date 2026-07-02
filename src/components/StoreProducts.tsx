@@ -44,7 +44,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
       totalPrice = Math.max(0, basePrice - promoDiscount.value)
     }
   }
-  const qrCode = selectedProduct ? generatePayload('0812345678', { amount: totalPrice }) : ''
+  const qrCode = selectedProduct ? generatePayload('0960604947', { amount: totalPrice }) : ''
   const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCode)}`
 
   const handleProductClick = (product: any) => {
