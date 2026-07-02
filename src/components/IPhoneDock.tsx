@@ -9,7 +9,7 @@ export default function IPhoneDock() {
   const pathname = usePathname()
   
   // Hide on admin routes
-  if (pathname.startsWith('/admin')) return null
+  if (!pathname || pathname.startsWith('/admin')) return null
 
   const navItems = [
     { name: 'ร้านค้า', path: '/', icon: Store },
