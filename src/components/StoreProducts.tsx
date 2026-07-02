@@ -105,7 +105,7 @@ export default function StoreProducts({ products }: { products: any[] }) {
   }
 
   const categories = ['Ranks', 'Keys', 'Items']
-  const rankOrder = ['vip', 'vip+', 'mvp', 'mvp+', 'premium', 'supreme', 'superior']
+  const rankOrder = ['vip', 'vip+', 'mvp', 'mvp+', 'premium', 'supreme', 'support', 'superior']
 
   return (
     <>
