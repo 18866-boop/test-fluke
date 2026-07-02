@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Store, ShieldAlert, Users } from 'lucide-react'
+import { Store, ShieldAlert, Users, Star } from 'lucide-react'
 
 export default function IPhoneDock() {
   const pathname = usePathname()
@@ -15,6 +15,7 @@ export default function IPhoneDock() {
     { name: 'ร้านค้า', path: '/', icon: Store },
     { name: 'กฎกติกา', path: '/rules', icon: ShieldAlert },
     { name: 'ทีมงาน', path: '/staff', icon: Users },
+    { name: 'ผู้สนับสนุน', path: '/supporters', icon: Star },
   ]
 
   return (
@@ -26,7 +27,7 @@ export default function IPhoneDock() {
             <Link 
               key={item.path} 
               href={item.path}
-              className="relative px-5 py-3 rounded-full flex flex-col items-center gap-1 transition-all"
+              className="relative px-5 py-3 rounded-full flex flex-col items-center gap-1 transition-all group"
             >
               {isActive && (
                 <motion.div 
@@ -36,7 +37,7 @@ export default function IPhoneDock() {
                 />
               )}
               <item.icon size={22} className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/40 group-hover:text-white/70'}`} />
-              <span className={`text-[10px] font-medium relative z-10 transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/40'}`}>
+              <span className={`text-[10px] font-medium relative z-10 transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/40 group-hover:text-white/70'}`}>
                 {item.name}
               </span>
             </Link>
