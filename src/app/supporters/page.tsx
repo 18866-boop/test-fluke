@@ -7,12 +7,12 @@ export const revalidate = 0
 
 async function getUuid(username: string): Promise<string> {
   try {
-    const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`, {
+    const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${username}`, {
       next: { revalidate: 86400 } // cache for 24 hours
     })
     if (!res.ok) return username // fallback to username if fails
     const data = await res.json()
-    return data.id || username
+    return data.uuid || username
   } catch (error) {
     return username
   }
