@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import generatePayload from 'promptpay-qr'
 import { X, CreditCard, Gift, Loader2, Check } from 'lucide-react'
-import { createOrder, verifyPromoCode, processTrueMoneyVoucher, processSlipVerification } from '@/app/actions'
+import { createOrder, verifyPromoCode, processTrueMoneyVoucher, processSlipVerification, getStoreSettings } from '@/app/actions'
 import { useAuth } from '@/context/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect } from 'react'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -26,8 +27,18 @@ export default function StoreProducts({ products }: { products: any[] }) {
   const [paymentMethod, setPaymentMethod] = useState<'promptpay'|'truewallet'>('promptpay')
   const [voucherLink, setVoucherLink] = useState('')
   const [slipFile, setSlipFile] = useState<File | null>(null)
-  const [serverSelection, setServerSelection] = useState<'survival' | 'oneblock'>('survival')
+  const [servers, setServers] = useState<string[]>(['survival'])
+  const [serverSelection, setServerSelection] = useState<string>('survival')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    getStoreSettings().then(s => {
+      if (s.servers && s.servers.length > 0) {
+        setServers(s.servers)
+        setServerSelection(s.servers[0])
+      }
+    }).catch(console.error)
+  }, [])
   const [success, setSuccess] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [promoCode, setPromoCode] = useState('')
@@ -296,33 +307,27 @@ export default function StoreProducts({ products }: { products: any[] }) {
                       </div>
                     </div>
                     
-                    <div>
-                      <label className="block text-sm font-medium mb-3 text-white/80 ml-1">เลือกเซิร์ฟเวอร์ที่ต้องการรับไอเทม</label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          type="button"
-                          onClick={() => setServerSelection('survival')}
-                          className={`py-3 px-4 rounded-xl border transition-all ${
-                            serverSelection === 'survival' 
-                              ? 'bg-[#8B5CF6]/20 border-[#8B5CF6] text-white shadow-[0_0_15px_rgba(139,92,246,0.2)]' 
-                              : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'
-                          }`}
-                        >
-                          <span className="font-bold">Survival</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setServerSelection('oneblock')}
-                          className={`py-3 px-4 rounded-xl border transition-all ${
-                            serverSelection === 'oneblock' 
-                              ? 'bg-[#8B5CF6]/20 border-[#8B5CF6] text-white shadow-[0_0_15px_rgba(139,92,246,0.2)]' 
-                              : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'
-                          }`}
-                        >
-                          <span className="font-bold">Oneblock</span>
-                        </button>
+                    {servers.length > 1 && (
+                      <div>
+                        <label className="block text-sm font-medium mb-3 text-white/80 ml-1">เลือกเซิร์ฟเวอร์ที่ต้องการรับไอเทม</label>
+                        <div className="grid grid-cols-2 gap-3">
+                          {servers.map(server => (
+                            <button
+                              key={server}
+                              type="button"
+                              onClick={() => setServerSelection(server)}
+                              className={`py-3 px-4 rounded-xl border transition-all capitalize ${
+                                serverSelection === server 
+                                  ? 'bg-[#8B5CF6]/20 border-[#8B5CF6] text-white shadow-[0_0_15px_rgba(139,92,246,0.2)]' 
+                                  : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'
+                              }`}
+                            >
+                              <span className="font-bold">{server}</span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                     
                     <div>
                       <label className="block text-sm font-medium mb-3 text-white/80 ml-1">โค้ดส่วนลด (ถ้ามี)</label>

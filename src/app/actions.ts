@@ -384,3 +384,17 @@ export async function deleteManualSupporter(id: string) {
   revalidatePath('/admin/supporters')
   revalidatePath('/supporters')
 }
+
+export async function getStoreSettings() {
+  const settingsSnap = await db.collection('settings').doc('store').get()
+  if (!settingsSnap.exists) {
+    return { servers: ['survival'] } // default
+  }
+  return settingsSnap.data() as { servers: string[] }
+}
+
+export async function updateStoreSettings(servers: string[]) {
+  await db.collection('settings').doc('store').set({ servers }, { merge: true })
+  revalidatePath('/admin/settings')
+  revalidatePath('/') // Revalidate storefront
+}

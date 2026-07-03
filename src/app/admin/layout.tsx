@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Ticket, Star } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Ticket, Star, Settings } from 'lucide-react'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -13,6 +13,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'รายการสั่งซื้อ', href: '/admin/orders', icon: ShoppingCart },
     { name: 'โค้ดส่วนลด', href: '/admin/promo-codes', icon: Ticket },
     { name: 'ผู้สนับสนุน (Supporters)', href: '/admin/supporters', icon: Star },
+    { name: 'ตั้งค่าระบบ', href: '/admin/settings', icon: Settings },
   ]
 
   return (

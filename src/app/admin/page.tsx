@@ -1,5 +1,6 @@
 import { db } from '@/lib/firebase-admin'
 import { DollarSign, Package, ShoppingCart } from 'lucide-react'
+import RevenueGraph from '@/components/RevenueGraph'
 
 export const revalidate = 0
 
@@ -49,6 +50,8 @@ export default async function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      <RevenueGraph orders={orders} />
     </div>
   )
 }
