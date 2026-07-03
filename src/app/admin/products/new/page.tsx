@@ -1,8 +1,8 @@
-import { createProduct } from '@/app/actions'
+import { createProduct, getStoreSettings } from '@/app/actions'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
-export default function NewProductPage() {
+export default async function NewProductPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
@@ -41,6 +41,18 @@ export default function NewProductPage() {
         <div>
           <label className="block mb-2 text-sm text-[#c4bbf0]">ลิงก์รูปภาพ (Optional)</label>
           <input name="imageUrl" className="w-full bg-[#363b4e]/50 border border-[#c4bbf0]/20 rounded-xl p-3 outline-none focus:border-[#927fbf]" placeholder="https://..." />
+        </div>
+
+        <div>
+          <label className="block mb-2 text-sm text-[#c4bbf0]">เซิร์ฟเวอร์ที่รองรับ (ให้ผู้เล่นเลือกรับของได้)</label>
+          <div className="flex gap-4 bg-[#363b4e]/30 border border-[#c4bbf0]/20 rounded-xl p-4">
+            {(await getStoreSettings()).servers.map(server => (
+              <label key={server} className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="availableServers" value={server} defaultChecked className="w-4 h-4 rounded accent-[#927fbf]" />
+                <span className="capitalize">{server}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
         <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/10">

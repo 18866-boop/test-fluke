@@ -27,24 +27,27 @@ export default function StoreProducts({ products }: { products: any[] }) {
   const [paymentMethod, setPaymentMethod] = useState<'promptpay'|'truewallet'>('promptpay')
   const [voucherLink, setVoucherLink] = useState('')
   const [slipFile, setSlipFile] = useState<File | null>(null)
-  const [servers, setServers] = useState<string[]>(['survival'])
   const [serverSelection, setServerSelection] = useState<string>('survival')
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    getStoreSettings().then(s => {
-      if (s.servers && s.servers.length > 0) {
-        setServers(s.servers)
-        setServerSelection(s.servers[0])
-      }
-    }).catch(console.error)
-  }, [])
   const [success, setSuccess] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [promoCode, setPromoCode] = useState('')
   const [promoDiscount, setPromoDiscount] = useState<{type: string, value: number} | null>(null)
   const [promoError, setPromoError] = useState('')
   const [promoLoading, setPromoLoading] = useState(false)
+
+  // Determine available servers for the selected product
+  const availableServers = selectedProduct?.availableServers && selectedProduct.availableServers.length > 0 
+    ? selectedProduct.availableServers 
+    : ['survival']
+
+  useEffect(() => {
+    if (selectedProduct && availableServers.length > 0) {
+      if (!availableServers.includes(serverSelection)) {
+        setServerSelection(availableServers[0])
+      }
+    }
+  }, [selectedProduct])
 
   // Generate PromptPay QR
   let basePrice = selectedProduct ? selectedProduct.price * quantity : 0
@@ -307,11 +310,11 @@ export default function StoreProducts({ products }: { products: any[] }) {
                       </div>
                     </div>
                     
-                    {servers.length > 1 && (
+                    {availableServers.length > 1 && (
                       <div>
                         <label className="block text-sm font-medium mb-3 text-white/80 ml-1">เลือกเซิร์ฟเวอร์ที่ต้องการรับไอเทม</label>
                         <div className="grid grid-cols-2 gap-3">
-                          {servers.map(server => (
+                          {availableServers.map((server: string) => (
                             <button
                               key={server}
                               type="button"

@@ -34,18 +34,20 @@ export async function createProduct(formData: FormData) {
 export async function updateProduct(id: string, formData: FormData) {
   const name = formData.get('name') as string
   const description = formData.get('description') as string
-  const category = formData.get('category') as string
   const price = parseFloat(formData.get('price') as string)
+  const category = formData.get('category') as string
   const imageUrl = formData.get('imageUrl') as string
   const command = formData.get('command') as string
+  const availableServers = formData.getAll('availableServers') as string[]
 
   await db.collection('products').doc(id).update({
     name,
     description,
-    category,
     price,
+    category,
     imageUrl: imageUrl || null,
     command: command || null,
+    availableServers,
     updatedAt: new Date().toISOString()
   })
 
